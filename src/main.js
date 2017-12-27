@@ -11,12 +11,12 @@ import './assets/stylus/index.styl'
 
 Vue.config.productionTip = false
 Vue.prototype.$ajax = axios
+Vue.use(Element)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
-  Element,
   template: '<App/>',
   components: { App }
 })

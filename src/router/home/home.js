@@ -10,7 +10,12 @@ const Home = (resolve) => {
     resolve(module)
   })
 }
-const defaultHome = []
+const defaultHome = [{
+  path: '/home',
+  redirect: {
+    name: 'index'
+  }
+}]
 const home = [{
   path: '/',
   component: Home,
