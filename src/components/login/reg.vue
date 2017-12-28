@@ -9,7 +9,7 @@
         <h1>数 据 智 能&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;驱 动 未 来</h1>
       </div>
       <div class="board">
-        <h2>忘记密码</h2>
+        <h2>注册账号</h2>
         <div class="inputCont">
           <div class="input" :class="{'actives':focus}">
             <img src="../../assets/images/phone.png" alt="">
@@ -36,7 +36,10 @@
             <img src="../../assets/images/password.png" alt="">
             <input type="password" placeholder="再次输入密码" v-model="agpass" @focus="focusWords=true" @blur="focusWords=false">
           </div>
-          <button @click="submit">提&nbsp;交</button>
+          <el-checkbox v-model="checked">阅读并接受《抱一云信用户协议》</el-checkbox>
+          <router-link :to="{name:'certification'}">
+            <button @click="submit">下一步</button>
+          </router-link>
           <h3>
             <span>
               <router-link :to="{ name: 'login', params: { userId: 123 }}">去登录</router-link>
@@ -50,7 +53,7 @@
 <script type="text/ecmascript-6">
 import md5 from 'md5'
 export default {
-  name: 'sign',
+  name: 'reg',
   data () {
     return {
       isCan: false,
@@ -64,7 +67,8 @@ export default {
       focusCode: false,
       focusWord: false,
       focusWords: false,
-      isSendMsg: true
+      isSendMsg: true,
+      checked: false
     }
   },
   methods: {
@@ -116,7 +120,7 @@ export default {
         })
         return false
       }
-      this.$ajax.post('/api/user/resetPwd', {
+      this.$ajax.post('', {
         telephone: this.phoneNum,
         code: this.code,
         password: md5(this.newpass),
@@ -241,7 +245,7 @@ export default {
           height 16px
           border 1px solid #cccccc
           padding 14px 9px
-          margin-bottom 24px
+          margin-bottom 17px
           img
             display inline-block
             // width 24px

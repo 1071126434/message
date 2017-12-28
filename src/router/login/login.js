@@ -8,6 +8,11 @@ const Sign = (resolve) => {
     resolve(module)
   })
 }
+const Reg = (resolve) => {
+  import('@/components/login/reg').then((module) => {
+    resolve(module)
+  })
+}
 
 const login = [{
   path: '/login',
@@ -18,7 +23,12 @@ const login = [{
   path: '/sign',
   component: Sign,
   name: 'sign',
-  meta: { title: '注册' }
+  meta: { title: '找回密码' }
+}, {
+  path: '/reg',
+  component: Reg,
+  name: 'reg',
+  meta: { title: '登陆' }
 }]
 
 export default login
