@@ -37,6 +37,7 @@ export default {
   background #E8EBF0
   .left
     width 180px
+    min-width 180px
     height 100%
     background #19223D
   .right
