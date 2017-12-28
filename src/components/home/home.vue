@@ -41,7 +41,12 @@ export default {
     background #19223D
   .right
     flex 1
+    display flex
+    flex-direction column
     .rTop
       height 60px
       background #ffffff
+    .rCont
+      flex 1
+      overflow auto
 </style>
