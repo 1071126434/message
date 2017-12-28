@@ -164,7 +164,7 @@ export default {
           top 14px
           &.moreActive
             transition 0.1s linear
-            transform rotate(180deg)
+            transform rotate(-180deg)
           &.unMoreActive
             transition 0.1s linear
             transform rotate(0)
