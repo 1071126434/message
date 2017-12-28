@@ -4,9 +4,7 @@
       <navBar></navBar>
     </div>
     <div class="right">
-      <div class="rTop">
-        <userTitle></userTitle>
-      </div>
+      <userTitle></userTitle>
       <div class="rCont">
         <router-view/>
       </div>
@@ -32,22 +30,20 @@ export default {
 .home
   width 100%
   height 100%
-  overflow hidden
+  position fixed
   display flex
   background #E8EBF0
   .left
-    width 180px
-    min-width 180px
-    height 100%
+    flex 0 0 180px
     background #19223D
   .right
     flex 1
     display flex
     flex-direction column
-    .rTop
-      height 60px
-      background #ffffff
+    // min-width 1200px
+    overflow hidden
     .rCont
       flex 1
+      overflow hidden
       overflow auto
 </style>
