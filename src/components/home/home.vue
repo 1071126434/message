@@ -30,10 +30,10 @@ export default {
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .home
-  width 100%
   height 100%
   overflow hidden
   display flex
+  flex 1
   background #E8EBF0
   .left
     width 180px

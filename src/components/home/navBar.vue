@@ -91,7 +91,25 @@ export default {
           {
             icon: 'el-icon-question',
             header: '帮助文档',
-            router: 'help'
+            router: 'help',
+            children: [
+              {
+                header: '产品简介',
+                router: 'modelManger'
+              },
+              {
+                header: '短信文档使用指引',
+                router: 'modelIntro'
+              },
+              {
+                header: '用户指南',
+                router: 'modelIntro'
+              },
+              {
+                header: '开发指南',
+                router: 'modelIntro'
+              }
+            ]
           }
         ]
       },
@@ -189,4 +207,6 @@ export default {
             width 3px
             background #40B6FF
             position absolute
+      .childBox
+        background #141C35
 </style>

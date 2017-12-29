@@ -121,23 +121,77 @@
     <ul class="operate">
       <li>
         <h2>短信模板
-          <i class="el-icon-circle-plus"></i>
+          <i class="el-icon-circle-plus model"></i>
         </h2>
         <div>
           <strong>2</strong>
-          <span>可用</span>
-          <b class="small-btn"></b>
+          <span>(可用)</span>
+          <b class="small-btn" @click="showModel=true">查看</b>
         </div>
       </li>
       <li>
         <h2>短信签名
-          <i class="el-icon-circle-plus"></i>
+          <i class="el-icon-circle-plus sign"></i>
         </h2>
+        <div>
+          <strong>2</strong>
+          <span>(可用)</span>
+          <b class="small-btn">查看</b>
+        </div>
       </li>
       <li>
         <h2>发送短信</h2>
+        <div>
+          <a class="radius-btn">营销短信</a>
+          <a class="radius-btn orange">效果跟踪短信</a>
+        </div>
       </li>
     </ul>
+    <div class="orders">
+      <h2 class="title">月账单</h2>
+      <div class="search">
+        <span>月账单查询</span>
+        <el-date-picker v-model="monthOrder" type="month" placeholder="选择月">
+        </el-date-picker>
+        <el-button style="float:right">下载账单</el-button>
+      </div>
+      <div class="cont">
+        <h3>当月短信：
+          <span>68</span>&nbsp;&nbsp;条&nbsp;&nbsp;&nbsp;&nbsp;当前费用：
+          <span>2.17</span>&nbsp;&nbsp;元
+        </h3>
+        <el-table :data="orderArr" style="width: 100%;border:1px solid #C0CCDA">
+          <el-table-column prop="time" label="消费时间" align="center">
+          </el-table-column>
+          <el-table-column prop="countType" label="计费类型" align="center">
+          </el-table-column>
+          <el-table-column prop="orderType" label="订单类型" align="center">
+          </el-table-column>
+          <el-table-column prop="countMoney" label="消费" align="center">
+          </el-table-column>
+          <el-table-column prop="orderStatus" label="订单状态" align="center">
+            <template slot-scope="scope">
+              <span class="tipSuccess">{{ scope.row.orderStatus }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="countNum" label="累计用量 (条)" align="center">
+          </el-table-column>
+        </el-table>
+        <div class="pager">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage1" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="alerts">
+      <el-dialog title="提示" :visible.sync="showModel" :modal-append-to-body="false" width="600px">
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showModel = false">取 消</el-button>
+          <el-button type="primary" @click="showModel = false">确 定</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -147,11 +201,17 @@ export default {
   data () {
     return {
       sendDetaildMonth: '',
+      monthOrder: '',
       msgType: '',
       acTime: '',
+      currentPage1: 1,
+      showModel: false,
       msgOption1: {
         tooltip: {
           trigger: 'item',
+          position: function (p) {
+            return [p[0] + 10, p[1] - 10]
+          },
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
         series: [
@@ -189,6 +249,9 @@ export default {
       msgOption2: {
         tooltip: {
           trigger: 'item',
+          position: function (p) {
+            return [p[0] + 10, p[1] - 10]
+          },
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
         series: [
@@ -228,7 +291,7 @@ export default {
           trigger: 'axis'
         },
         legend: {
-          data: ['计划下单数', '实际下单数']
+          data: ['计划下单数', '实际下单数', '失败数量']
         },
         toolbox: {
           show: false,
@@ -273,9 +336,27 @@ export default {
               }
             },
             data: [1, 4, 2, 5, 3, 2, 9]
+          },
+          {
+            name: '失败数量',
+            type: 'line',
+            itemStyle: {
+              normal: {
+                color: 'transparent'
+              }
+            },
+            data: [2, 5, 4, 6, 4, 3, 8]
           }
         ]
-      }
+      },
+      orderArr: [{
+        time: '2016-05-02',
+        countType: '扣费',
+        orderType: '消费',
+        countMoney: '10.59',
+        orderStatus: '已扣费',
+        countNum: '5'
+      }]
     }
   },
   methods: {
@@ -289,6 +370,12 @@ export default {
       msg1.setOption(this.msgOption1)
       msg2.setOption(this.msgOption2)
       sendChart.setOption(this.sendOption)
+    },
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
     }
   },
   mounted () {
@@ -396,8 +483,69 @@ export default {
         font-size 14px
         color #525F75
   .operate
-    padding 16px 0
+    padding 20px 0
+    margin-top 16px
     background #ffffff
+    display flex
     li
+      flex 1
       box-shadow -1px 0 0 #E8EBF0
+      padding-left 40px
+      padding-right 40px
+      h2
+        font-size 18px
+        color #525F75
+        margin-bottom 18px
+        i
+          float right
+          position relative
+          color #40B6FF
+          cursor pointer
+          &:hover:after
+            content '添加短信模板'
+            position absolute
+            top 20px
+            right 0
+            height 30px
+            width 104px
+            background #40B6FF
+            font-size 12px
+            line-height 30px
+            color #ffffff
+            text-align center
+            box-shadow 0 2px 4px rgba(64, 182, 255, 0.65)
+        .sign:hover:after
+          content '添加短信签名'
+      >div
+        text-align center
+        strong
+          font-size 32px
+          color #4A566D
+        span
+          font-size 14px
+          color #93A2BA
+          margin-right 22px
+        a.orange
+          background #FF9F00
+          box-shadow 0 2px 6px rgba(255, 159, 0, 0.48)
+          margin-left 20px
+  .orders
+    background #ffffff
+    margin-top 16px
+    .search
+      padding 16px 20px
+      span
+        font-size 16px
+        line-height 40px
+        color #525F75
+        margin-right 20px
+    .cont
+      padding 10px 20px 20px
+      h3
+        font-size 12px
+        color #4A566D
+        margin-bottom 14px
+        span
+          font-size 20px
+          color #FB203A
 </style>
