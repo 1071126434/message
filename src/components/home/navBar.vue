@@ -1,15 +1,17 @@
 <template>
   <div class="menu">
     <div class="logo">
+      <img src="../../assets/images/logo.png" alt="logo">
+      <span>抱一云信</span>
     </div>
     <div class="router">
       <div class="routerBox" v-for="(item,index) in menus" :key="index" ref="routerBox">
         <router-link tag="div" :to="{name:item.router}" class="routerHeader" v-if="!item.children">
-          <span class="icon" :class="item.icon"></span>
+          <span class="icon iconfont" :class="item.icon"></span>
           <span class="text">{{item.header}}</span>
         </router-link>
         <div class="routerHeader" v-if="item.children" @click="changeShow(index)">
-          <span class="icon" :class="[item.icon]"></span>
+          <span class="icon iconfont" :class="[item.icon]"></span>
           <span class="text">{{item.header}}</span>
           <span class="more el-icon-arrow-down" :class="{'moreActive':chooseIndexArray.includes(index), 'unMoreActive': !chooseIndexArray.includes(index) }"></span>
           <!-- <span class="more el-icon-arrow-up"></span> -->
@@ -17,7 +19,7 @@
         <el-collapse-transition>
           <div class="childRouter" v-if="item.children" v-show="chooseIndexArray.includes(index)">
             <router-link tag="div" :to="{name:childItem.router}" class="childBox" v-for="(childItem,childIndex) in item.children" :key="childIndex">
-              <span class="icon" :class="childItem.icon"></span>
+              <span class="icon iconfont" :class="childItem.icon"></span>
               <span class="text">{{childItem.header}}</span>
             </router-link>
           </div>
@@ -40,12 +42,12 @@ export default {
       get () {
         return [
           {
-            icon: 'el-icon-menu',
+            icon: 'icon-home',
             header: '首页',
             router: 'index'
           },
           {
-            icon: 'el-icon-star-on',
+            icon: 'icon-yingxiaoduanxin',
             header: '营销短信',
             router: 'market',
             children: [
@@ -59,8 +61,8 @@ export default {
             ]
           },
           {
-            icon: 'el-icon-message',
-            header: '短信模板',
+            icon: 'icon-xityongduanxin',
+            header: '系统短信',
             router: 'modelManger',
             children: [
               {
@@ -74,22 +76,22 @@ export default {
             ]
           },
           {
-            icon: 'el-icon-goods',
+            icon: 'icon-qianmingguanli',
             header: '签名管理',
             router: 'manger'
           },
           {
-            icon: 'el-icon-search',
+            icon: 'icon-duanxinchaxun',
             header: '短信查询',
             router: 'search'
           },
           {
-            icon: 'el-icon-tickets',
+            icon: 'icon-yuezhangdan',
             header: '月账单',
             router: 'orders'
           },
           {
-            icon: 'el-icon-question',
+            icon: 'icon-help',
             header: '帮助文档',
             router: 'help',
             children: [
@@ -152,10 +154,18 @@ export default {
   height 100%
   .logo
     height 60px
+    line-height 60px
+    text-align center
     background #19223D
-    .img
-      position relative
-      width 100%
+    img
+      vertical-align middle
+      width 36px
+    span
+      font-size 20px
+      margin-left 12px
+      font-weight bold
+      vertical-align middle
+      color #ffffff
   .headActive
     color #40B6FF
   .router
@@ -174,7 +184,7 @@ export default {
         .icon
           text-align center
           position absolute
-          top 14px
+          top 0
           left 24px
         .more
           position absolute

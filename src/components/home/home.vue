@@ -42,6 +42,5 @@ export default {
     overflow hidden
     .rCont
       flex 1
-      overflow hidden
       overflow auto
 </style>

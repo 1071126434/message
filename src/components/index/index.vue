@@ -3,23 +3,23 @@
     <ul class="top">
       <li>
         <div class="left">
-
+          <i class="iconfont icon-wallet"></i>
         </div>
         <div class="right">
           <p>账户余额(元)：
             <strong>￥21.21</strong>
-            <b class="small-btn">充值</b>
+            <b class="small-btn" @click="$router.push({name: 'recharge'})">充值</b>
           </p>
           <p>
-            <span>收费标准</span>
-            <span>查看账单</span>
-            <span>余额预警：￥20.00</span>
+            <span class="link" @click="$router.push({name: 'fee'})">收费标准</span>
+            <span class="link">查看账单</span>
+            <span class="link" @click="showLeftMoney=true">余额预警：￥20.00</span>
           </p>
         </div>
       </li>
       <li>
-        <div class="left">
-
+        <div class="left" style="background:#40B6FF;">
+          <i class="iconfont icon-image"></i>
         </div>
         <div class="right">
           <p>今日发送成功数(条)：
@@ -31,8 +31,8 @@
         </div>
       </li>
       <li>
-        <div class="left">
-
+        <div class="left" style="background:#FF9F00;">
+          <i class="iconfont icon-image1"></i>
         </div>
         <div class="right">
           <p>本月发送成功数(条)：
@@ -50,7 +50,7 @@
         </el-date-picker>
       </h2>
       <div class="msgType">
-        <div class="magDetail">
+        <div class="msgDetail">
           <h3>系统短信
             <span class="link">接口调用说明
               <i class="el-icon-question"></i>
@@ -60,40 +60,40 @@
             <div class="msg1 charts" style="height:100px" ref="msg1"></div>
             <div style="padding-top:40px">
               <p>
-                <i></i>
+                <i style="border-color: #40B6FF"></i>
                 <span>发送成功数：</span>
                 <b>12489条</b>
               </p>
               <p>
-                <i></i>
+                <i style="border-color: #B8E3FE"></i>
                 <span>发送失败数：</span>
                 <b>12489条</b>
               </p>
               <p>
-                <i></i>
+                <i style="border-color: #B8E3FE #40B6FF #40B6FF #B8E3FE"></i>
                 <span>系统发送总条</span>
                 <b>12489条</b>
               </p>
             </div>
           </div>
         </div>
-        <div class="magDetail">
+        <div class="msgDetail">
           <h3>营销短信</h3>
           <div class="chartWrap">
             <div class="msg2 charts" style="height:100px" ref="msg2"></div>
             <div style="padding-top:40px">
               <p>
-                <i></i>
+                <i style="border-color: #FF9F00"></i>
                 <span>发送成功数：</span>
                 <b>12489条</b>
               </p>
               <p>
-                <i></i>
+                <i style="border-color: #FED590"></i>
                 <span>发送失败数：</span>
                 <b>12489条</b>
               </p>
               <p>
-                <i></i>
+                <i style="border-color: #FED590 #FF9F00 #FF9F00 #FED590"></i>
                 <span>系统发送总条</span>
                 <b>12489条</b>
               </p>
@@ -136,7 +136,7 @@
         <div>
           <strong>2</strong>
           <span>(可用)</span>
-          <b class="small-btn">查看</b>
+          <b class="small-btn" @click="showSign=true">查看</b>
         </div>
       </li>
       <li>
@@ -184,8 +184,43 @@
       </div>
     </div>
     <div class="alerts">
-      <el-dialog title="提示" :visible.sync="showModel" :modal-append-to-body="false" width="600px">
-        <span>这是一段信息</span>
+      <el-dialog title="短信模板列表" :visible.sync="showModel" :modal-append-to-body="false" width="600px">
+        <div class="list">
+          <el-table :data="modelArr" class="border" style="width: 100%;border:1px solid #C0CCDA">
+            <el-table-column prop="code" label="模板CODE" align="center">
+            </el-table-column>
+            <el-table-column prop="modelName" label="模板名称" align="center">
+            </el-table-column>
+            <el-table-column prop="modelType" label="模板类型" align="center">
+            </el-table-column>
+          </el-table>
+        </div>
+        <span slot="footer" class="dialog-footer pager">
+          <el-pagination background layout="prev, pager, next" :total="50">
+          </el-pagination>
+        </span>
+      </el-dialog>
+      <el-dialog title="短信签名列表" :visible.sync="showSign" :modal-append-to-body="false" width="600px">
+        <div class="list">
+          <el-table :data="signArr" class="border" style="width: 100%;border:1px solid #C0CCDA">
+            <el-table-column prop="signName" label="签名名称" align="center">
+            </el-table-column>
+            <el-table-column prop="signType" label="签名类型" align="center">
+            </el-table-column>
+          </el-table>
+        </div>
+        <span slot="footer" class="dialog-footer pager">
+          <el-pagination background layout="prev, pager, next" :total="50">
+          </el-pagination>
+        </span>
+      </el-dialog>
+      <el-dialog title="修改余额提醒值" :visible.sync="showLeftMoney" :modal-append-to-body="false" width="600px">
+        <div class="list tips">
+          <span>余额提醒值</span>
+          <el-input v-model="lestMoneyTip" style="width:300px;" placeholder="请输入内容"></el-input>
+          <span>元</span>
+          <p>当账户余额低于提醒值时，您会收到提醒短信。</p>
+        </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="showModel = false">取 消</el-button>
           <el-button type="primary" @click="showModel = false">确 定</el-button>
@@ -204,8 +239,12 @@ export default {
       monthOrder: '',
       msgType: '',
       acTime: '',
+      // 余额提醒值
+      lestMoneyTip: '',
       currentPage1: 1,
       showModel: false,
+      showSign: false,
+      showLeftMoney: false,
       msgOption1: {
         tooltip: {
           trigger: 'item',
@@ -220,6 +259,7 @@ export default {
             type: 'pie',
             radius: ['55%', '84%'],
             center: ['100px', '50%'],
+            color: ['#40B6FF', '#B8E3FE'],
             avoidLabelOverlap: false,
             label: {
               normal: {
@@ -260,6 +300,7 @@ export default {
             type: 'pie',
             radius: ['55%', '84%'],
             center: ['100px', '50%'],
+            color: ['#FF9F00', '#FED590'],
             avoidLabelOverlap: false,
             label: {
               normal: {
@@ -356,6 +397,19 @@ export default {
         countMoney: '10.59',
         orderStatus: '已扣费',
         countNum: '5'
+      }],
+      modelArr: [{
+        code: 'SMS_70335616',
+        modelName: '验证码通用模版',
+        modelType: '验证码模板'
+      }, {
+        code: 'SMS_70335616',
+        modelName: '通知短信通用模版',
+        modelType: '通知模板'
+      }],
+      signArr: [{
+        signName: '使用报到',
+        signType: '验证码或同孩子短信'
       }]
     }
   },
@@ -397,7 +451,15 @@ export default {
         margin-right 0
       .left
         width 48px
+        height 100%
         background #FF3341
+        display table
+        text-align center
+        i
+          display table-cell
+          vertical-align middle
+          font-size 24px
+          color #ffffff
       .right
         flex 1
         padding 14px 32px
@@ -414,9 +476,6 @@ export default {
             padding-right 6px
             margin-right 6px
             border-right 1px solid #525f75
-            &:hover
-              cursor pointer
-              color #40B6FF
             &:last-child
               padding 0
               margin 0
@@ -425,6 +484,9 @@ export default {
             &:last-child:hover
               color #525f75
               cursor default
+          span.link:hover
+            cursor pointer
+            color #40B6FF
   .title
     height 40px
     line-height 40px
@@ -440,11 +502,14 @@ export default {
       float right
     .msgType
       display flex
-      .magDetail
+      .msgDetail
         flex 1
         padding 16px 20px
         &:first-child
           box-shadow 1px 0 0 #E8EBF0
+        .link:hover
+          cursor pointer
+          color #40B6FF
         h3
           font-size 14px
           color #525F75
@@ -463,9 +528,10 @@ export default {
               line-height 30px
               i
                 display inline-block
-                width 10px
-                height 10px
-                background red
+                width 0
+                height 0
+                border-width 6px
+                border-style solid
                 margin-right 10px
               span
                 color #93A2BA
@@ -548,4 +614,17 @@ export default {
         span
           font-size 20px
           color #FB203A
+  .alerts
+    .list
+      padding 0 20px
+    .tips
+      color #525F75
+      span
+        font-size 14px
+        margin-right 20px
+        margin-left 10px
+      p
+        font-size 12px
+        line-height 30px
+        padding-left 100px
 </style>
