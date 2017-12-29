@@ -122,7 +122,7 @@ export default {
     float left
     color #525F75
     font-size 16px
-    font-weight 600
+    font-weight 500
   .state
     float right
     padding 12px 20px 12px 0px

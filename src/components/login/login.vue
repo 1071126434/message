@@ -128,10 +128,11 @@ export default {
       box-shadow 0 1px 12px rgba(255, 255, 255, 0.5)
       h2
         font-size 24px
-        color #7c7c7c
+        color #525F75
         line-height 60px
         box-shadow 0 1px 0 #cfc9c9
         text-align center
+        font-weight 500
       .inputCont
         padding 30px
         .input

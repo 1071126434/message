@@ -186,7 +186,7 @@ export default {
       box-shadow 0 1px 12px rgba(255, 255, 255, 0.5)
       h2
         font-size 24px
-        color #7c7c7c
+        color #525F75
         line-height 60px
         box-shadow 0 1px 0 #cfc9c9
         text-align center
@@ -230,7 +230,7 @@ export default {
             height 44px
             line-height 44px
             color #ffffff
-            background #999999
+            background #BAC6DC
             font-size 16px
           .active
             background #40b6ff
