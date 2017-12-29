@@ -27,8 +27,9 @@ export default {
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .userTitle
-  height 100%
+  height 60px
   font-size 12px
+  background white
   .cont
     float right
     line-height 100%
