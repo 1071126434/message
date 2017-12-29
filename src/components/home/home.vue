@@ -29,7 +29,6 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .home
   height 100%
-  position fixed
   display flex
   flex 1
   background #E8EBF0
@@ -40,7 +39,6 @@ export default {
     flex 1
     display flex
     flex-direction column
-    // min-width 1200px
     overflow hidden
     .rCont
       flex 1
