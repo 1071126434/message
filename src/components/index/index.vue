@@ -227,6 +227,23 @@
         </span>
       </el-dialog>
     </div>
+    <div class="confirm" v-if="0">
+      <div class="cont">
+        <div class="top">
+          <i class="qiye"></i>
+          <div>
+            <p>请您先认证企业短信</p>
+            <p>若您已提交信息，请耐心等待平台审核</p>
+            <p>平台联系方式：
+              <span class="blue">1337384556552</span>
+            </p>
+          </div>
+        </div>
+        <div class="bottom">
+          <span class="btn">去认证</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -415,6 +432,7 @@ export default {
   },
   methods: {
     initCharts () {
+      console.log(1)
       this.$refs.msg1.style.height = '120px'
       this.$refs.msg2.style.height = '120px'
       this.$refs.sendChart.style.height = '470px'
@@ -440,6 +458,7 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .index
   padding 16px
+  position relative
   .top
     display flex
     li
@@ -627,4 +646,39 @@ export default {
         font-size 12px
         line-height 30px
         padding-left 100px
+  .confirm
+    position absolute
+    top 0
+    left 0
+    width 100%
+    height 100%
+    background rgba(2, 2, 2, 0.1)
+    .cont
+      padding 50px 100px
+      position absolute
+      top 320px
+      left 0
+      right 0
+      margin 0 auto
+      width 600px
+      box-sizing border-box
+      background #ffffff
+      box-shadow 0 1px 5px rgba(0, 0, 0, 0.2)
+      i
+        display inline-block
+        width 74px
+        height 74px
+      .top>div
+        display inline-block
+        margin-left 30px
+        p
+          font-size 16px
+          color #414C62
+          line-height 26px
+          span
+            color #3EAFFF
+            font-weight bold
+      .bottom
+        text-align center
+        margin-top 32px
 </style>

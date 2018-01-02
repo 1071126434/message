@@ -8,12 +8,22 @@ const modelIntro = (resolve) => {
     resolve(module)
   })
 }
+const addModel = (resolve) => {
+  import('@/components/model/addModel').then((module) => {
+    resolve(module)
+  })
+}
 
 const model = [{
   path: 'home/modelManger',
   component: modelManger,
   name: 'modelManger',
   meta: { title: '模块管理' }
+}, {
+  path: 'home/modelManger/addModel',
+  component: addModel,
+  name: 'addModel',
+  meta: { title: '模块管理-添加模板' }
 }, {
   path: 'home/modelIntro',
   component: modelIntro,
