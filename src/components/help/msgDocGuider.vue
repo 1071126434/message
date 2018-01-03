@@ -1,9 +1,9 @@
 <template>
-  <div class="modelIntro">
-    <h2>接口调用说明</h2>
+  <div class="msgDocGuider">
+    <h2>短信服务文档使用指引</h2>
     <div class="cont">
       <div>
-        <span class="title">短信使用流程</span>
+        <span class="title">短信接口配置</span>
       </div>
       <div class="step">
         <el-steps direction="vertical" :active="-1">
@@ -61,7 +61,7 @@
 <script type="text/ecmascript-6">
 import Clipboard from 'clipboard'
 export default {
-  name: 'modelIntro',
+  name: 'msgDocGuider',
   data () {
     return {
       showKey: false
@@ -81,7 +81,7 @@ export default {
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-.modelIntro
+.msgDocGuider
   margin 16px 20px
   background #ffffff
   h2
@@ -95,13 +95,12 @@ export default {
     padding 20px
     .title
       display inline-block
-      width 150px
+      width 116px
       height 32px
       line-height 32px
-      background rgba(64, 182, 255, 0.2)
+      background #40B6FF
       font-size 14px
-      color #40B6FF
-      border-radius 16px
+      color #ffffff
       text-align center
       font-weight bold
     .step

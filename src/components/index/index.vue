@@ -378,6 +378,7 @@ export default {
           {
             name: '计划下单数',
             type: 'line',
+            smooth: true,
             itemStyle: {
               normal: {
                 color: '#029E4A'
@@ -388,6 +389,7 @@ export default {
           {
             name: '实际下单数',
             type: 'line',
+            smooth: true,
             itemStyle: {
               normal: {
                 color: '#40B6FF'
@@ -397,6 +399,7 @@ export default {
           },
           {
             name: '失败数量',
+            smooth: true,
             type: 'line',
             itemStyle: {
               normal: {

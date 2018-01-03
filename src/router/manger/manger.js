@@ -3,12 +3,22 @@ const Manger = (resolve) => {
     resolve(module)
   })
 }
+const addSign = (resolve) => {
+  import('@/components/manger/addSign').then((module) => {
+    resolve(module)
+  })
+}
 
 const manger = [{
   path: 'home/manger',
   component: Manger,
   name: 'manger',
   meta: { title: '签名管理' }
+}, {
+  path: 'home/manger/addSign',
+  component: addSign,
+  name: 'addSign',
+  meta: { title: '签名管理-添加签名' }
 }]
 
 export default manger

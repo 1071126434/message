@@ -13,6 +13,10 @@
       </h2>
       <ul class="addCont">
         <li>
+          <span>驳回理由</span>
+          <strong>模板内容不对</strong>
+        </li>
+        <li>
           <span>模板名称</span>
           <el-input v-model="addObj.modelName" placeholder="请输入内容" style="width:370px"></el-input>
           <p class="tip">不超过30个字符</p>
@@ -70,6 +74,7 @@ export default {
         color #40B6FF
   .cont
     background #ffffff
+    min-height 600px
     h2
       font-size 16px
       line-height 40px
@@ -95,6 +100,16 @@ export default {
           display inline-block
           width 100px
           vertical-align top
+        strong
+          display inline-block
+          height 32px
+          line-height 32px
+          font-weight bold
+          background rgba(255, 51, 65, 0.2)
+          padding-left 12px
+          padding-right 12px
+          font-size 14px
+          color #FF3341
         p
           font-size 12px
           line-height 20px
