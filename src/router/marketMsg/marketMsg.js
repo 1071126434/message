@@ -13,6 +13,16 @@ const SendInfo = (resolve) => {
     resolve(module)
   })
 }
+const MarketEffectDetail = (resolve) => {
+  import('@/components/marketMsg/marketEffectDetail').then((module) => {
+    resolve(module)
+  })
+}
+const MarketEffectSend = (resolve) => {
+  import('@/components/marketMsg/marketEffectSend').then((module) => {
+    resolve(module)
+  })
+}
 
 const marketMsg = [{
   path: 'home/market',
@@ -29,6 +39,16 @@ const marketMsg = [{
   component: SendInfo,
   name: 'sendInfo',
   meta: { title: '发送营销短信' }
+}, {
+  path: 'home/marketEffectDetail',
+  component: MarketEffectDetail,
+  name: 'marketEffectDetail',
+  meta: { title: '发送营销短信' }
+}, {
+  path: 'home/marketEffectSend',
+  component: MarketEffectSend,
+  name: 'marketEffectSend',
+  meta: { title: '发送营销短信2' }
 }]
 
 export default marketMsg

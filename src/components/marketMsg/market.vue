@@ -5,19 +5,19 @@
       <div class="line"></div>
       <ul class="search">
         <li>
-          发送时间
+          发送时间&nbsp; &nbsp;
           <el-date-picker v-model="value6" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
           </el-date-picker>
         </li>
         <li>
-          任务状态
+          任务状态&nbsp; &nbsp;
           <el-select v-model="value" placeholder="请选择">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </li>
         <li>
-          关键字
+          关键字&nbsp; &nbsp;
           <el-input v-model="input" placeholder="请输入短信内容关键字"></el-input>
         </li>
         <li>
@@ -33,6 +33,12 @@
       <div class="table">
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="sendCont" label="发送内容" align="center">
+            <template slot-scope="scope">
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">{{ scope.row.sendCont }}</div>
+                <p class="overHidden">{{ scope.row.sendCont }}</p>
+              </el-tooltip>
+            </template>
           </el-table-column>
           <el-table-column prop="sendType" label="发送方式" align="center">
           </el-table-column>
@@ -140,7 +146,7 @@ export default {
       }],
       value: '',
       tableData: [{
-        sendCont: 'hjdlfjoiejfo',
+        sendCont: 'hjdlfj梵蒂冈梵蒂冈的的说法都是sdfafas大是打发三分大师傅大沙发沙发大师傅oiejfo',
         sendType: '单挑发送',
         creatTime: '2019-10-10',
         sendTime: '2019-10-10',
@@ -189,6 +195,7 @@ export default {
   margin 16px
   position relative
   overflow hidden
+  min-width 1080px
   h1
     padding 12px 0px 12px 20px
     float left
@@ -202,6 +209,8 @@ export default {
     clear both
   .search
     padding 16px 0px 12px 20px
+    font-size 14px
+    color #5E6D82
     li
       float left
       margin-right 48px

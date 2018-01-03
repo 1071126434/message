@@ -36,6 +36,10 @@
             <img src="../../assets/images/password.png" alt="">
             <input type="password" placeholder="再次输入密码" v-model="agpass" @focus="focusWords=true" @blur="focusWords=false">
           </div>
+          <div class="input" :class="{'actives':focusWordss}">
+            <img src="../../assets/images/password.png" alt="">
+            <input type="password" placeholder="输入图形验证码" v-model="picPassword" @focus="focusWordss=true" @blur="focusWordss=false">
+          </div>
           <el-checkbox v-model="checked">阅读并接受《抱一云信用户协议》</el-checkbox>
           <router-link :to="{name:'certification'}">
             <button @click="submit">下一步</button>
@@ -61,12 +65,14 @@ export default {
       newpass: '',
       agpass: '',
       code: '',
+      picPassword: '',
       show: true,
       time: 60,
       focus: false,
       focusCode: false,
       focusWord: false,
       focusWords: false,
+      focusWordss: false,
       isSendMsg: true,
       checked: false
     }

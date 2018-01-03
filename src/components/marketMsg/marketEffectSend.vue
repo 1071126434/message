@@ -2,14 +2,14 @@
   <div class="sendInfo">
     <div class="sendTop">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'market' }">营销短信</el-breadcrumb-item>
-        <el-breadcrumb-item>发送营销短信</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'market' }">效果追踪短信</el-breadcrumb-item>
+        <el-breadcrumb-item>发送追踪服务短信</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class='sendInfoContent'>
       <div class="top">
-        <h1>发送营销短信</h1>
-        <p>营销短信,每条发送成功的短信收费为
+        <h1>发送追踪服务短信</h1>
+        <p>该服务能够获取打开链接记录，需付费，服务费按条收费，每条发送成功的短信收费（包含服务费）为
           <span>0.045元</span>
         </p>
       </div>
@@ -29,8 +29,11 @@
           <textarea name="" class="input" cols="40" rows="10" placeholder="请输入内容" v-model="textarea2" @input="descInput"></textarea>
           <p>
             <em>{{word}}</em>个字,共
-            <em>{{tiao}}</em>条短信(每
-            <em>70</em>个字为一条短信)</p>
+            <em>1</em>条短信(每
+            <em>56</em>个字为一条短信)</p>
+        </li>
+        <li>
+          <textarea name="" class="inputUrl" cols="40" rows="3" placeholder="请在此处输入URL链接" v-model="textarea3"></textarea>
         </li>
         <li style="line-height: 40px">
           <span>发送时间</span>
@@ -106,6 +109,7 @@ export default {
     return {
       sendPic: sendPic,
       textarea2: '',
+      textarea3: '',
       radio: '1',
       radio1: '1',
       input: '',
@@ -168,7 +172,11 @@ export default {
     descInput () {
       let length = this.textarea2.length
       this.word = length
-      this.tiao = Math.ceil(length / 70)
+      if (this.word > 56) {
+        alert('再输打死你')
+        this.textarea2 = this.textarea2.substring(0, 56)
+        this.word = 56
+      }
     }
   }
 }
@@ -176,7 +184,7 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .sendInfo
   overflow hidden
-  min-width 1000px
+  min-width 1080px
   .sendTop
     padding 12px 0px 12px 16px
     font-size 12px
@@ -221,6 +229,8 @@ export default {
           font-size 12px
           i
             color #3eafff
+        .inputUrl
+          margin-left 100px
       .content p
         font-size 12px
         color #93A2BA
@@ -239,8 +249,8 @@ export default {
         margin-left 100px
     .picSend
       float right
-      position relative
       margin-right 192px
+      position relative
       .scoll
         width 163px
         height 176px

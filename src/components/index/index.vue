@@ -1,3 +1,6 @@
+
+
+
 <template>
   <div class="index" ref="index">
     <ul class="top">
@@ -456,6 +459,7 @@ export default {
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>
+
 .index
   padding 16px
   position relative
