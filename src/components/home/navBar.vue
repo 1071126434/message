@@ -97,19 +97,19 @@ export default {
             children: [
               {
                 header: '产品简介',
-                router: 'modelManger'
+                router: 'produceIntro'
               },
               {
                 header: '短信文档使用指引',
-                router: 'modelIntro'
+                router: 'msgDocGuider'
               },
               {
                 header: '用户指南',
-                router: 'modelIntro'
+                router: 'userGuider'
               },
               {
                 header: '开发指南',
-                router: 'modelIntro'
+                router: 'developGuider'
               }
             ]
           }
