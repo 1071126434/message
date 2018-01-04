@@ -1,10 +1,9 @@
 <template>
   <div class="sendInfo">
     <div class="sendTop">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'market' }">效果追踪短信</el-breadcrumb-item>
-        <el-breadcrumb-item>发送追踪服务短信</el-breadcrumb-item>
-      </el-breadcrumb>
+      <span @click="$router.push({name: 'marketEffect'})">效果追踪短信</span>
+      <strong>></strong>
+      <b>发送追踪服务短信</b>
     </div>
     <div class='sendInfoContent'>
       <div class="top">
@@ -20,7 +19,7 @@
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <sub>还没有签名?点此
+          <sub style="margin-left:8px">还没有签名?点此
             <i>新建签名</i>
           </sub>
         </li>
@@ -95,7 +94,9 @@
       <div class="picSend" style="margin-top:25px">
         <img :src="sendPic" alt="">
         <div class="scoll">
-          <div>{{textarea2+textarea3}}</div>
+          <div>
+            <p>{{textarea2+textarea3}}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -194,6 +195,12 @@ export default {
   .sendTop
     padding 12px 0px 12px 16px
     font-size 12px
+    color #525F75
+    line-height 1
+    span
+      &:hover
+        cursor pointer
+        color #40B6FF
   .sendInfoContent
     background #FFFFFF
     margin 0px 17px 0px 15px
@@ -214,6 +221,7 @@ export default {
         margin-right 15px
         font-size 12px
         color #4a566d
+        margin-top 5px
         span
           color #fb203a
     .sendConte
@@ -258,23 +266,25 @@ export default {
       margin-right 192px
       position relative
       .scoll
-        width 163px
-        height 176px
+        width 132px
+        height 172px
         overflow auto
         position absolute
-        top 80px
-        left -16px
+        top 83px
+        left 22px
         ::-webkit-scrollbar
           normal
         div
           border 1px solid #eff5f6
-          background #eff5f6
           border-radius 4px 4px 4px 0px
           line-height 25px
-          transform scale(0.6)
-          width 122%
-          margin-bottom -48px
-          padding 5px
+          transform scale(0.5)
+          width 194%
+          transform-origin 0 0
+          height 70px
+          p
+            background #eff5f6
+            word-break break-all
     .iconfont
       color #00C957
       font-size 14px

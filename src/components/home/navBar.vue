@@ -1,7 +1,7 @@
 <template>
   <div class="menu">
     <div class="logo">
-      <img src="../../assets/images/logo.png" alt="logo">
+      <img src="../../assets/images/ico.png" alt="logo">
       <span>抱一云信</span>
     </div>
     <div class="router">
@@ -159,7 +159,7 @@ export default {
     background #19223D
     img
       vertical-align middle
-      width 36px
+      width 60px
     span
       font-size 20px
       margin-left 12px

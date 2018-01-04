@@ -71,10 +71,15 @@
       </p>
       <div class="circular" ref="circular" v-show="pointOne"></div>
       <div class="sucessNum" ref="sucessNum" v-show="pointTwo"></div>
-      <p class="totalCount">
+      <p class="totalCount" v-show="pointOne">
         <span>
           发送成功总数:55条</span>&nbsp;&nbsp;
         <span>点击率:95%</span>
+      </p>
+      <p class="totalCount" v-show="pointTwo">
+        <span>
+          发送成功总数:55条</span>&nbsp;&nbsp;
+        <span>成功率:95%</span>
       </p>
     </div>
     <!-- 列表展示部分 -->

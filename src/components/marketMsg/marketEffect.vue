@@ -7,19 +7,19 @@
       <div class="line"></div>
       <ul class="search">
         <li>
-          发送时间&nbsp;&nbsp;
+          发送时间&nbsp;&nbsp;&nbsp;
           <el-date-picker v-model="value6" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
           </el-date-picker>
         </li>
         <li>
-          任务状态&nbsp;&nbsp;
+          任务状态&nbsp;&nbsp;&nbsp;
           <el-select v-model="value" placeholder="请选择">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </li>
         <li>
-          关键字&nbsp;&nbsp;
+          关键字&nbsp;&nbsp;&nbsp;
           <el-input v-model="input" placeholder="请输入短信内容关键字"></el-input>
         </li>
         <li>

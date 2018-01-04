@@ -1,10 +1,9 @@
 <template>
   <div class="sendInfo">
     <div class="sendTop">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'market' }">营销短信</el-breadcrumb-item>
-        <el-breadcrumb-item>发送营销短信</el-breadcrumb-item>
-      </el-breadcrumb>
+      <span @click="$router.push({name: 'market'})">营销短信</span>
+      <strong>></strong>
+      <b>发送营销短信</b>
     </div>
     <div class='sendInfoContent'>
       <div class="top">
@@ -92,7 +91,9 @@
       <div class="picSend" style="margin-top:25px">
         <img :src="sendPic" alt="">
         <div class="scoll">
-          <div v-for="(item,index) in inputArr" :key="index">{{item}}</div>
+          <div v-for="(item,index) in inputArr" :key="index">
+            <p>{{item}}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -185,7 +186,13 @@ export default {
   min-width 1000px
   .sendTop
     padding 12px 0px 12px 16px
+    color #525F75
+    line-height 1
     font-size 12px
+    span
+      &:hover
+        cursor pointer
+        color #40B6FF
   .sendInfoContent
     background #FFFFFF
     margin 0px 17px 0px 15px
@@ -248,23 +255,25 @@ export default {
       position relative
       margin-right 192px
       .scoll
-        width 163px
-        height 176px
+        width 132px
+        height 172px
         overflow auto
         position absolute
-        top 80px
-        left -16px
+        top 83px
+        left 22px
         ::-webkit-scrollbar
           normal
         div
           border 1px solid #eff5f6
-          background #eff5f6
           border-radius 4px 4px 4px 0px
           line-height 25px
-          transform scale(0.6)
-          width 122%
-          margin-bottom -48px
-          padding 5px
+          transform scale(0.5)
+          width 194%
+          transform-origin 0 0
+          height 70px
+          p
+            background #eff5f6
+            word-break break-all
     .iconfont
       color #00C957
       font-size 14px

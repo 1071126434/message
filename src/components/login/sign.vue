@@ -1,8 +1,8 @@
 <template>
   <div class="login">
     <div class="logo">
-      <img src="../../assets/images/logo.png" alt="logo">
-      <span>抱 一 通 信</span>
+      <img src="../../assets/images/ico.png" alt="logo">
+      <span>抱 一 云 信</span>
     </div>
     <div class="cont">
       <div class="text">
@@ -13,12 +13,12 @@
         <div class="inputCont">
           <div class="input" :class="{'actives':focus}">
             <img src="../../assets/images/phone.png" alt="">
-            <input @input="isCanUse" v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false">
+            <input @input="isCanUse" v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false" autofocus >
           </div>
           <div class="inputCode">
             <div class="smInput input" :class="{'actives':focusCode}">
               <img src="../../assets/images/password.png" alt="">
-              <input type="password" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
+              <input type="password" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false" >
             </div>
             <span class="testButton" v-show="!isCan">
               验证码
@@ -157,12 +157,12 @@ export default {
     padding 26px 45px
     overflow hidden
     img
-      width 47.5px
-      height 36.5px
+      height 60px
       line-height 36.5px
       opacity 37.53
       float left
       vertical-align middle
+      margin-top -11px
     span
       font-size 18px
       line-height 30px
@@ -182,7 +182,7 @@ export default {
     .board
       align-self center
       background #ffffff
-      border 1px solid #cccccc
+      border 1px solid #BAC6DC
       box-shadow 0 1px 12px rgba(255, 255, 255, 0.5)
       h2
         font-size 24px
@@ -197,7 +197,7 @@ export default {
           .smInput
             width 176px
             height 16px
-            border 1px solid #cccccc
+            border 1px solid #BAC6DC
             padding 14px 9px
             margin-bottom 24px
             span
@@ -239,7 +239,7 @@ export default {
         .input
           width 310px
           height 16px
-          border 1px solid #cccccc
+          border 1px solid #BAC6DC
           padding 14px 9px
           margin-bottom 24px
           img
@@ -271,6 +271,7 @@ export default {
             font-size 12px
             color #999999
             line-height 28px
+            margin-top 5px
         button
           width 100%
           border none

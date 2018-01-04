@@ -1,8 +1,8 @@
 <template>
   <div class="login">
     <div class="logo">
-      <img src="../../assets/images/logo.png" alt="logo">
-      <span>抱 一 通 信</span>
+      <img src="../../assets/images/ico.png" alt="logo">
+      <span>抱 一 云 信</span>
     </div>
     <div class="cont">
       <div class="text">
@@ -13,7 +13,7 @@
         <div class="inputCont">
           <div class="input" :class="{'actives':focus}">
             <img src="../../assets/images/phone.png" alt="">
-            <input v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false">
+            <input v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false" autofocus>
           </div>
           <div class="inputCode">
             <div class="input smInput" :class="{'actives':focusWordss}">
@@ -94,7 +94,7 @@ export default {
     },
     isCanUse () {
       console.log(this.picPassword)
-      if (/^1[34578]\d{9}$/.test(this.phoneNum) && this.picPassword === this.numberArr) {
+      if (/^1[34578]\d{9}$/.test(this.phoneNum) && (this.picPassword === this.numberArr.toLowerCase() || this.picPassword === this.numberArr)) {
         this.isCan = true
         this.isSendMsg = true
       } else {
@@ -244,12 +244,12 @@ export default {
     padding 26px 45px
     overflow hidden
     img
-      width 47.5px
-      height 36.5px
+      height 60px
       line-height 36.5px
       opacity 37.53
       float left
       vertical-align middle
+      margin-top -11px
     span
       font-size 18px
       line-height 30px
@@ -269,11 +269,11 @@ export default {
     .board
       align-self center
       background #ffffff
-      border 1px solid #cccccc
+      border 1px solid #BAC6DC
       box-shadow 0 1px 12px rgba(255, 255, 255, 0.5)
       h2
         font-size 24px
-        color #7c7c7c
+        color #525F75
         line-height 60px
         box-shadow 0 1px 0 #cfc9c9
         text-align center
@@ -286,7 +286,7 @@ export default {
           .smInput
             width 176px
             height 16px
-            border 1px solid #cccccc
+            border 1px solid #BAC6DC
             padding 14px 9px
             margin-bottom 24px
             span
@@ -348,7 +348,7 @@ export default {
         .input
           width 310px
           height 16px
-          border 1px solid #cccccc
+          border 1px solid #BAC6DC
           padding 14px 9px
           margin-bottom 17px
           img
