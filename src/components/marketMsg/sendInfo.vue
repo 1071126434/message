@@ -169,7 +169,13 @@ export default {
       let length = this.textarea2.length
       this.word = length
       this.tiao = Math.ceil(length / 70)
+    },
+    closeWindow (e) {
+      return '确认要离开? 离开后若未解析完成数据将丢失!'
     }
+  },
+  mounted () {
+    window.onbeforeunload = this.closeWindow
   }
 }
 </script>

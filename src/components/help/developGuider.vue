@@ -1,6 +1,6 @@
 <template>
   <div class="developGuider">
-    <h2>开发指南</h2>
+    <h6>开发指南</h6>
     <div class="cont">
       <div class="nav">
         <span v-for="(item, index) in navArr" :class="{ 'actives': active==index }" :key="index" @click="active=index">{{ item }}</span>
@@ -26,7 +26,7 @@
           <h1>云信短信API使用手册</h1>
           <p>*云信系统使用了HMAC进行加密签名，具体可参考样例DEMO使用</p>
           <h2>通用参数说明</h2>
-          <div>
+          <div class="code">
             <pre>
               {
                 'message': 'ok', //接口状态说明
@@ -35,10 +35,32 @@
               }
           </pre>
           </div>
+          <h2>系统短信发送接口(验证码、通知类)</h2>
+          <h3>描述</h3>
+          <p>用于第三方系统发送系统短信、通知场景</p>
+          <h3>请求URL (POST)</h3>
+          <div class="code">
+            <pre>
+              https://smsapi.startdt.com/v2/sms/send
+            </pre>
+          </div>
         </div>
       </div>
       <div class="detail" v-show="active==2">
-
+        <div class="demo">
+          <p>JAVA系统短信：
+            <span>DEMO下载</span>
+          </p>
+          <p>JAVA营销短信：
+            <span>DEMO下载</span>
+          </p>
+          <p>PHP系统短信：
+            <span>DEMO下载</span>
+          </p>
+          <p>PHP营销短信
+            <span>DEMO下载</span>
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -112,6 +134,13 @@ export default {
   margin 16px 20px
   min-height 600px
   background #ffffff
+  h6
+    font-size 16px
+    color #525F75
+    font-weight bold
+    padding 0 20px
+    line-height 40px
+    box-shadow 0 1px 0 #E8EBF0
   .cont
     padding 20px
   .nav
@@ -153,7 +182,10 @@ export default {
       font-size 30px
       margin-top 50px
     h2
-      font-size 20px
+      font-size 24px
+    h3
+      font-size 16px
+      font-weight bold
     h1, h2
       font-weight bold
       color #000000
@@ -164,4 +196,25 @@ export default {
       font-size 16px
       line-height 20px
       margin 40px 0
+    .code
+      margin-top 30px
+      margin-bottom 40px
+      border-radius 4px
+      background #FCF5E2
+      border 1px solid #E9E4CD
+      padding 15px 20px
+      pre
+        line-height 20px
+        font-size 14px
+        font-family skti
+  .demo
+    p
+      font-size 14px
+      color #414C62
+      line-height 44px
+      font-weight bold
+      span
+        font-weight bold
+        color #3EAFFF
+        cursor pointer
 </style>

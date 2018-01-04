@@ -35,17 +35,17 @@ const marketMsg = [{
   name: 'marketEffect',
   meta: { title: '效果追踪短信' }
 }, {
-  path: 'home/sendInfo',
+  path: 'home/market/sendInfo',
   component: SendInfo,
   name: 'sendInfo',
-  meta: { title: '发送营销短信' }
+  meta: { title: '发送效果追踪短信' }
 }, {
-  path: 'home/marketEffectDetail',
+  path: 'home/marketEffect/marketEffectDetail',
   component: MarketEffectDetail,
   name: 'marketEffectDetail',
   meta: { title: '发送营销短信' }
 }, {
-  path: 'home/marketEffectSend',
+  path: 'home/marketEffect/marketEffectSend',
   component: MarketEffectSend,
   name: 'marketEffectSend',
   meta: { title: '发送营销短信2' }

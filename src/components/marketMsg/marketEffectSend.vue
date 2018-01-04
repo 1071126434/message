@@ -173,11 +173,17 @@ export default {
       let length = this.textarea2.length
       this.word = length
       if (this.word > 56) {
-        alert('再输打死你')
+        alert('超出字数')
         this.textarea2 = this.textarea2.substring(0, 56)
         this.word = 56
       }
+    },
+    closeWindow (e) {
+      return '确认要离开? 离开后若未解析完成数据将丢失!'
     }
+  },
+  mounted () {
+    window.onbeforeunload = this.closeWindow
   }
 }
 </script>
