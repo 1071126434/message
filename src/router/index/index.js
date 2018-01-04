@@ -1,18 +1,9 @@
-const Index = (resolve) => {
-  import('@/components/index/index').then((module) => {
-    resolve(module)
-  })
-}
-const Fee = (resolve) => {
-  import('@/components/index/fee').then((module) => {
-    resolve(module)
-  })
-}
-const Recharge = (resolve) => {
-  import('@/components/index/recharge').then((module) => {
-    resolve(module)
-  })
-}
+const Index = () =>
+  import(/* webpackChunkName: "Index" */ '@/components/index/index')
+const Fee = () =>
+  import(/* webpackChunkName: "Fee" */ '@/components/index/fee')
+const Recharge = () =>
+  import(/* webpackChunkName: "Recharge" */ '@/components/index/recharge')
 
 const index = [{
   path: 'home/index',
