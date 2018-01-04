@@ -57,18 +57,18 @@
             <i class="iconfont icon-dui"></i>
             <span>上传成功</span>
           </p> -->
-          <!-- <p>
+          <p>
             <i class="iconfont icon-dui"></i>
             <span>解析成功</span>
-          </p> -->
+          </p>
           <!-- <p class="shibai">
             <i class="icon-buchenggong"></i>
             <span>解析失败</span>
           </p> -->
-          <p class="waite">
+          <!-- <p class="waite">
             <i class="el-icon-loading"></i>
             <span>解析中</span>
-          </p>
+          </p> -->
         </li>
         <li style="margin-left:100px">
           共计上传34个手机号,成功解析32个,解析失败2个
@@ -95,7 +95,7 @@
       <div class="picSend" style="margin-top:25px">
         <img :src="sendPic" alt="">
         <div class="scoll">
-          <div v-for="(item,index) in inputArr" :key="index">{{item}}</div>
+          <div>{{textarea2+textarea3}}</div>
         </div>
       </div>
     </div>
@@ -139,16 +139,16 @@ export default {
       value: ''
     }
   },
-  computed: {
-    inputArr: function () {
-      let arr = []
-      for (let i = 0; i < this.tiao; i++) {
-        let str = this.textarea2.substring(70 * i, 70 * (i + 1))
-        arr.push(str)
-      }
-      return arr
-    }
-  },
+  // computed: {
+  //   inputArr: function () {
+  //     let arr = []
+  //     for (let i = 0; i < this.tiao; i++) {
+  //       let str = this.textarea2.substring(70 * i, 70 * (i + 1))
+  //       arr.push(str)
+  //     }
+  //     return arr
+  //   }
+  // },
   methods: {
     btn () {
       console.log(this.radio1)

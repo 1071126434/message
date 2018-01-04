@@ -35,6 +35,11 @@
       <div class="table">
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="sendCont" label="发送内容" align="center">
+            <template slot-scope="scope">
+              <el-tooltip class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.sendCont" placement="bottom">
+                <span class="tooltipOverflow">{{ scope.row.sendCont }}</span>
+              </el-tooltip>
+            </template>
           </el-table-column>
           <el-table-column prop="sendType" label="发送方式" align="center">
           </el-table-column>

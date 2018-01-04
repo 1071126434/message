@@ -199,8 +199,8 @@ export default {
               }
             },
             data: [
-              { value: 335, name: '点击率' },
-              { value: 310, name: '发送成功率' }
+              { value: 335, name: '点击数' },
+              { value: 310, name: '未点击数' }
             ]
           }
         ]
@@ -236,8 +236,8 @@ export default {
               }
             },
             data: [
-              { value: 335, name: '发送失败率' },
-              { value: 310, name: '发送成功率' }
+              { value: 335, name: '发送成功数' },
+              { value: 310, name: '发送失败数' }
             ]
           }
         ]
