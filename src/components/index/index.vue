@@ -15,7 +15,7 @@
           </p>
           <p>
             <span class="link" @click="$router.push({name: 'fee'})">收费标准</span>
-            <span class="link">查看账单</span>
+            <span class="link" @click="$router.push({name: 'orders'})">查看账单</span>
             <span class="link" @click="showLeftMoney=true">余额预警：￥20.00</span>
           </p>
         </div>
@@ -55,7 +55,7 @@
       <div class="msgType">
         <div class="msgDetail">
           <h3>系统短信
-            <span class="link">接口调用说明
+            <span class="link" @click="$router.push({name: 'modelIntro'})">接口调用说明
               <i class="el-icon-question"></i>
             </span>
           </h3>
@@ -113,8 +113,8 @@
           <el-option label="全部" value="">
           </el-option>
         </el-select>
-        <span>活动时间 </span>
-        <el-date-picker v-model="acTime" type="date" placeholder="选择日期" style="margin-right:48px;margin-left:20px;width:150px;">
+        <span>发送时间 </span>
+        <el-date-picker v-model="acTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" style="margin-right:48px;margin-left:20px;width:300px;">
         </el-date-picker>
         <b class="btn">搜索</b>
         <el-button style="float:right">下载失败日志</el-button>
@@ -124,29 +124,29 @@
     <ul class="operate">
       <li>
         <h2>短信模板
-          <i class="el-icon-circle-plus model"></i>
+          <i class="el-icon-circle-plus model" @click="$router.push({name: 'addModel'})"></i>
         </h2>
         <div>
           <strong>2</strong>
           <span>(可用)</span>
-          <b class="small-btn" @click="showModel=true">查看</b>
+          <b class="small-btn" @click="$router.push({name: 'modelManger'})">查看</b>
         </div>
       </li>
       <li>
         <h2>短信签名
-          <i class="el-icon-circle-plus sign"></i>
+          <i class="el-icon-circle-plus sign" @click="$router.push({name: 'addSign'})"></i>
         </h2>
         <div>
           <strong>2</strong>
           <span>(可用)</span>
-          <b class="small-btn" @click="showSign=true">查看</b>
+          <b class="small-btn" @click="$router.push({name: 'manger'})">查看</b>
         </div>
       </li>
       <li>
         <h2>发送短信</h2>
         <div>
-          <a class="radius-btn">营销短信</a>
-          <a class="radius-btn orange">效果跟踪短信</a>
+          <a class="radius-btn" @click="$router.push({name: 'sendInfo'})">营销短信</a>
+          <a class="radius-btn orange" @click="$router.push({name: 'marketEffectSend'})">效果跟踪短信</a>
         </div>
       </li>
     </ul>

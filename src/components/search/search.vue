@@ -7,7 +7,11 @@
         <el-input v-model="phone" placeholder="填写手机号" class="inp" style="width:150px"></el-input>
         <span>短信类型</span>
         <el-select v-model="msgType" placeholder="请选择" class="inp">
-          <el-option label="全部" value="">
+          <el-option label="通知" value="0">
+          </el-option>
+          <el-option label="验证码" value="1">
+          </el-option>
+          <el-option label="营销短信" value="2">
           </el-option>
         </el-select>
         <span>活动时间</span>
@@ -48,7 +52,7 @@ export default {
     return {
       currentPage: 1,
       phone: '',
-      msgType: '',
+      msgType: '1',
       time: '',
       searchArr: [{
         phone: '186671899665',

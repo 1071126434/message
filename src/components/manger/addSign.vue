@@ -65,7 +65,7 @@ export default {
     return {
       addObj: {
         signName: '',
-        signType: [],
+        signType: ['营销短信', '系统短信'],
         modelCont: ''
       },
       imgUrl: ''

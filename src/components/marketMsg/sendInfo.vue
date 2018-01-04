@@ -176,6 +176,9 @@ export default {
   },
   mounted () {
     window.onbeforeunload = this.closeWindow
+  },
+  destroyed () {
+    window.onbeforeunload = null
   }
 }
 </script>
