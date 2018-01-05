@@ -13,41 +13,41 @@
         </li>
         <li class="inputSelect">
           <span>公司地址:</span>
-          <el-select v-model="value" placeholder="请选择">
+          <el-select v-model="value" placeholder="请选择" @input="isCont">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="value1" placeholder="请选择" @input="isCont">
+            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="value2" placeholder="请选择" @input="isCont">
+            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </li>
         <li style="margin-left:72px;margin-top:-10px">
-          <el-input v-model="input" placeholder="请输入与营业执照相同地址"></el-input>
+          <el-input v-model="input" placeholder="请输入与营业执照相同地址" @input="isCont"></el-input>
         </li>
         <li>
           <span>注册号或信用代码:</span>
-          <el-input v-model="input" placeholder="请输入内容"></el-input>
+          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>法人姓名:</span>
-          <el-input v-model="input" placeholder="请输入内容"></el-input>
+          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>联系人姓名:</span>
-          <el-input v-model="input" placeholder="请输入内容"></el-input>
+          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>联系人电话:</span>
-          <el-input v-model="input" placeholder="请输入内容"></el-input>
+          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>联系人邮箱:</span>
-          <el-input v-model="input" placeholder="请输入内容"></el-input>
+          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li style="text-align:left;margin-left:150px">
           <span style="margin-left:-65px">营业执照:</span>
@@ -82,12 +82,28 @@ export default {
         value: '选项2',
         label: '双皮奶'
       }],
-      value: ''
+      value: '',
+      options1: [{
+        value1: '选项1',
+        label: '黄金糕'
+      }, {
+        value1: '选项2',
+        label: '双皮奶'
+      }],
+      value1: '',
+      options2: [{
+        value2: '选项1',
+        label: '黄金糕'
+      }, {
+        value2: '选项2',
+        label: '双皮奶'
+      }],
+      value2: ''
     }
   },
   methods: {
     isCont () {
-      if (this.input1 !== '') {
+      if (this.input1 !== '' || this.value !== '' || this.value1 !== '' || this.value2 !== '') {
         this.status = false
         this.status_1 = true
       } else {
