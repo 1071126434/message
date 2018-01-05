@@ -29,7 +29,7 @@
           <div class="inputCode">
             <div class="smInput input" :class="{'actives':focusCode}">
               <img src="../../assets/images/password.png" alt="">
-              <input type="password" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
+              <input type="password" v-model="code" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
             </div>
             <span class="testButton" v-show="!isCan">
               验证码
@@ -50,9 +50,7 @@
           <div>
             <el-checkbox v-model="checked">阅读并接受《抱一云信用户协议》</el-checkbox>
           </div>
-          <router-link :to="{name:'certification'}">
-            <button @click="submit">下一步</button>
-          </router-link>
+          <button @click="submit">下一步</button>
           <h3>
             <span>
               <router-link :to="{ name: 'login', params: { userId: 123 }}">去登录</router-link>
@@ -65,6 +63,7 @@
 </template>
 <script type="text/ecmascript-6">
 import md5 from 'md5'
+import { mapActions } from 'vuex'
 export default {
   name: 'reg',
   data () {
@@ -103,9 +102,9 @@ export default {
     },
     send () {
       this.isSendMsg = false
-      this.$ajax.post('', {
+      this.$ajax.post('/api/sms/sendVcode', {
         telephone: this.phoneNum,
-        type: 2
+        type: 1
       }).then(data => {
         console.log(data)
         if (data.data.code === '200') {
@@ -134,6 +133,13 @@ export default {
       })
     },
     submit () {
+      if (this.phoneNum === '' || this.code === '' || this.newpass === '' || this.agpass === '') {
+        this.$message({
+          message: '请正确填写注册信息!!!',
+          type: 'warning'
+        })
+        return false
+      }
       if (this.newpass !== this.agpass) {
         this.$message({
           message: '两次密码不一致,请重新输入',
@@ -141,7 +147,7 @@ export default {
         })
         return false
       }
-      this.$ajax.post('', {
+      this.$ajax.post('/api/user/registerOut', {
         telephone: this.phoneNum,
         code: this.code,
         password: md5(this.newpass),
@@ -149,11 +155,13 @@ export default {
       }).then(data => {
         console.log(data)
         if (data.data.code === '200') {
+          this.setUserInfo(data.data.data)
+          this.setUserToken(data.headers.accesstoken)
           this.$message({
             message: data.data.message,
             type: 'success',
             onClose: () => {
-              this.$router.push({ name: 'login' })
+              this.$router.push({ name: 'certification' })
             }
           })
         } else {
@@ -166,6 +174,10 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
+    ...mapActions([
+      'setUserInfo',
+      'setUserToken'
+    ]),
     // 新建一个函数随机数
     number (min, max) {
       return parseInt(Math.random() * (max - min) + min)
