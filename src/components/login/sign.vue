@@ -13,12 +13,12 @@
         <div class="inputCont">
           <div class="input" :class="{'actives':focus}">
             <img src="../../assets/images/phone.png" alt="">
-            <input @input="isCanUse" v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false" autofocus >
+            <input @input="isCanUse" v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false" autofocus>
           </div>
           <div class="inputCode">
             <div class="smInput input" :class="{'actives':focusCode}">
               <img src="../../assets/images/password.png" alt="">
-              <input type="password" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false" >
+              <input v-model="code" type="password" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
             </div>
             <span class="testButton" v-show="!isCan">
               验证码
@@ -78,7 +78,7 @@ export default {
     },
     send () {
       this.isSendMsg = false
-      this.$ajax.post('/api/sms/sendVcode', {
+      this.$ajax.post('/api/user/resetPwd', {
         telephone: this.phoneNum,
         type: 2
       }).then(data => {
@@ -112,6 +112,13 @@ export default {
       if (this.newpass !== this.agpass) {
         this.$message({
           message: '两次密码不一致,请重新输入',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.newpass === '' || this.agpass === '' || this.phoneNum === '' || this.code === '') {
+        this.$message({
+          message: '请正确填写信息!!!',
           type: 'warning'
         })
         return false

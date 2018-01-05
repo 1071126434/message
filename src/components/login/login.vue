@@ -71,10 +71,9 @@ export default {
               message: '登录成功,页面跳转中...',
               type: 'success',
               onClose: () => {
-                this.$router.push({ name: 'coinApply', query: { userid: data.data.data.userId, phone: data.data.data.telephone } })
+                this.$router.push({ name: 'coinApply' })
               }
             })
-            sessionStorage.setItem('user', JSON.stringify(data.data.data))
           } else {
             this.$message({
               message: data.data.message,

@@ -9,20 +9,20 @@
       <ul>
         <li>
           <span>公司名称:</span>
-          <el-input v-model="input1" placeholder="请输入与营业执照相同公司名" @input="isCont"></el-input>
+          <el-input v-model="companyName" placeholder="请输入与营业执照相同公司名" @input="isCont"></el-input>
         </li>
         <li class="inputSelect">
           <span>公司地址:</span>
-          <el-select v-model="value" placeholder="请选择" @input="isCont">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="value" placeholder="请选择" @input="isCont" value-key=''>
+            <el-option v-for="(item,index) in options" :key="index" :label="item.label" :value="item">
             </el-option>
           </el-select>
           <el-select v-model="value1" placeholder="请选择" @input="isCont">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="(item,index) in options1" :key="index" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
           <el-select v-model="value2" placeholder="请选择" @input="isCont">
-            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="(item,index) in options2" :key="index" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </li>
@@ -31,23 +31,23 @@
         </li>
         <li>
           <span>注册号或信用代码:</span>
-          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
+          <el-input v-model="input2" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>法人姓名:</span>
-          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
+          <el-input v-model="input3" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>联系人姓名:</span>
-          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
+          <el-input v-model="input4" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>联系人电话:</span>
-          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
+          <el-input v-model="input5" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li>
           <span>联系人邮箱:</span>
-          <el-input v-model="input" placeholder="请输入内容" @input="isCont"></el-input>
+          <el-input v-model="input6" placeholder="请输入内容" @input="isCont"></el-input>
         </li>
         <li style="text-align:left;margin-left:150px">
           <span style="margin-left:-65px">营业执照:</span>
@@ -58,7 +58,7 @@
         </li>
         <li style="text-align:center;margin-top:20px">
           <el-button type="info" disabled v-show="status">提交审核</el-button>
-          <el-button type="primary" v-show="status_1" style="margin-left:-1px">主要按钮</el-button>
+          <el-button type="primary" v-show="status_1" style="margin-left:-1px" @click="submit">提交审核</el-button>
           <p class="wordText">注意:提交审核后,系统将会在一个工作日内完成审核</p>
         </li>
       </ul>
@@ -71,10 +71,15 @@ export default {
   data () {
     return {
       input: '',
-      imageUrl: '',
+      imageUrl: '123.jpg',
       status: true,
       status_1: false,
       input1: '',
+      input2: '',
+      input3: '',
+      input4: '',
+      input5: '',
+      input6: '',
       options: [{
         value: '选项1',
         label: '黄金糕'
@@ -103,7 +108,7 @@ export default {
   },
   methods: {
     isCont () {
-      if (this.input1 !== '' || this.value !== '' || this.value1 !== '' || this.value2 !== '') {
+      if (this.imageUrl !== '' && this.input1 !== '' && this.value !== '' && this.value1 !== '' && this.value2 !== '' && this.input2 !== '' && this.input3 !== '' && this.input4 !== '' && this.input5 !== '' && this.input6 !== '') {
         this.status = false
         this.status_1 = true
       } else {
@@ -126,6 +131,38 @@ export default {
       }
       return isJPG && isLt2M
     }
+  },
+  submit () {
+    this.$ajax.post('/api/companyCertify/submit', {
+      companyName: this.companyName,
+      // password: md5(this.password)
+      address: this.input,
+      companyCreditCode: this.input2,
+      legalName: this.input3,
+      concatName: this.input4,
+      concatTelephone: this.input5,
+      concatEmail: this.input6,
+      picUrl: this.imageUrl,
+      accountId: ''
+    }).then(data => {
+      console.log(data)
+      if (data.data.code === '200') {
+        this.$message({
+          message: '信息提交成功,请耐心等待',
+          type: 'success',
+          onClose: () => {
+            this.$router.push({ name: 'coinApply' })
+          }
+        })
+      } else {
+        this.$message({
+          message: data.data.message,
+          type: 'warning'
+        })
+      }
+    }).catch(() => {
+      this.$message.error('服务器错误！')
+    })
   }
 }
 </script>

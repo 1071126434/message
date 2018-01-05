@@ -133,6 +133,7 @@ export default {
       })
     },
     submit () {
+      this.$router.push({ name: 'certification' })
       if (this.phoneNum === '' || this.code === '' || this.newpass === '' || this.agpass === '') {
         this.$message({
           message: '请正确填写注册信息!!!',
