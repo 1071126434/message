@@ -23,8 +23,9 @@
         </li>
         <li>
           <span>发送类型</span>
-          <el-radio v-model="addObj.modelType" label="1">验证码</el-radio>
-          <el-radio v-model="addObj.modelType" label="2">短信通知</el-radio>
+          <el-radio v-model="addObj.modelType" label="1">短信通知</el-radio>
+          <el-radio v-model="addObj.modelType" label="2">验证码</el-radio>
+          <el-radio v-model="addObj.modelType" label="3">推广短信</el-radio>
         </li>
         <li>
           <span>模板内容</span>
@@ -56,6 +57,28 @@ export default {
         modelType: '1',
         modelCont: ''
       }
+    }
+  },
+  methods: {
+    addModel () {
+      this.$ajax.post('/api/template/addTemplate', {
+        type: this.addObj.modelType,
+        name: this.addObj.modelName,
+        content: this.addObj.modelCont,
+        accountId: '123'
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'warning'
+          })
+        }
+      }).catch((error) => {
+        this.$message.error(error)
+      })
     }
   }
 }
