@@ -71,7 +71,7 @@ export default {
               message: '登录成功,页面跳转中...',
               type: 'success',
               onClose: () => {
-                this.$router.push({ name: 'coinApply' })
+                this.$router.push({ name: 'index' })
               }
             })
           } else {

@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 // import Element from 'element-ui'
+import store from './store'
 import axios from './assets/js/http'
 import 'babel-polyfill'
 // import 'element-ui/lib/theme-chalk/index.css'
@@ -11,12 +12,13 @@ import './assets/stylus/index.styl'
 
 Vue.config.productionTip = false
 Vue.prototype.$ajax = axios
-  // Vue.use(Element)
+// Vue.use(Element)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

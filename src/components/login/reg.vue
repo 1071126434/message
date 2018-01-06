@@ -48,7 +48,8 @@
             <input type="password" placeholder="再次输入密码" v-model="agpass" @focus="focusWords=true" @blur="focusWords=false">
           </div>
           <div>
-            <el-checkbox v-model="checked">阅读并接受《抱一云信用户协议》</el-checkbox>
+            <el-checkbox v-model="checked">阅读并接受</el-checkbox>
+            <a style="font-size:14px;color:#3EAFFF">《抱一云信用户协议》</a>
           </div>
           <button @click="submit">下一步</button>
           <h3>
@@ -82,14 +83,14 @@ export default {
       focusWords: false,
       focusWordss: false,
       isSendMsg: true,
-      checked: false,
+      checked: true,
       numberArr: ''
     }
   },
   methods: {
     chanage () {
       this.canvas()
-      this.numberArr = ''
+      // this.numberArr = ''
     },
     isCanUse () {
       console.log(this.picPassword)
@@ -105,7 +106,7 @@ export default {
       this.$ajax.post('/api/sms/sendVcode', {
         telephone: this.phoneNum,
         type: 1
-      }).then(data => {
+      }).then((data) => {
         console.log(data)
         if (data.data.code === '200') {
           this.$message({
@@ -133,7 +134,6 @@ export default {
       })
     },
     submit () {
-      this.$router.push({ name: 'certification' })
       if (this.phoneNum === '' || this.code === '' || this.newpass === '' || this.agpass === '') {
         this.$message({
           message: '请正确填写注册信息!!!',
@@ -148,18 +148,26 @@ export default {
         })
         return false
       }
+      if (this.checked === false) {
+        this.$message({
+          message: '请先勾选用户协议',
+          type: 'warning'
+        })
+        return false
+      }
       this.$ajax.post('/api/user/registerOut', {
         telephone: this.phoneNum,
         code: this.code,
         password: md5(this.newpass),
-        repeatPwd: md5(this.agpass)
-      }).then(data => {
+        repeatPassword: md5(this.agpass),
+        type: 1
+      }).then((data) => {
         console.log(data)
         if (data.data.code === '200') {
           this.setUserInfo(data.data.data)
           this.setUserToken(data.headers.accesstoken)
           this.$message({
-            message: data.data.message,
+            message: '注册成功',
             type: 'success',
             onClose: () => {
               this.$router.push({ name: 'certification' })
@@ -171,8 +179,9 @@ export default {
             type: 'warning'
           })
         }
-      }).catch(() => {
-        this.$message.error('服务器错误！')
+      }).catch((error) => {
+        this.$message.error(error)
+        console.log(error)
       })
     },
     ...mapActions([
@@ -332,7 +341,7 @@ export default {
             height 44px
             line-height 44px
             color #ffffff
-            background #999999
+            background #BAC6DC
             font-size 16px
           .testButtonPic
             display inline-block
