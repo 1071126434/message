@@ -49,6 +49,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
 export default {
   name: 'modelManger',
   data () {
@@ -63,6 +64,11 @@ export default {
       }]
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
   methods: {
     handleClick (row) {
       console.log(row)
@@ -73,6 +79,25 @@ export default {
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
     }
+  },
+  mounted () {
+    this.$ajax.post('/api/homepage/getTemplateList', {
+      userId: this.userInfo.account,
+      pageNo: this.pageNo,
+      pageSize: this.pageSize
+    }).then((data) => {
+      let res = data.data
+      if (res.code === '200') {
+        console.log(data)
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'warning'
+        })
+      }
+    }).catch((error) => {
+      this.$message.error(error)
+    })
   }
 }
 </script>

@@ -34,7 +34,7 @@
         </li>
         <li>
           <span></span>
-          <b class="btn">提交审核</b>
+          <b class="btn" @click="addModel">提交审核</b>
           <b class="btn-b">取 消</b>
         </li>
         <li>
@@ -48,6 +48,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
 export default {
   name: 'addModel',
   data () {
@@ -59,17 +60,25 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
   methods: {
     addModel () {
       this.$ajax.post('/api/template/addTemplate', {
         type: this.addObj.modelType,
         name: this.addObj.modelName,
         content: this.addObj.modelCont,
-        accountId: '123'
+        accountId: this.userInfo.account
       }).then((data) => {
         let res = data.data
         if (res.code === '200') {
-
+          this.$message({
+            message: '添加成功!',
+            type: 'success'
+          })
         } else {
           this.$message({
             message: res.message,
