@@ -16,11 +16,13 @@
         <li>
           <span>选择签名</span>
           <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="(item,index) in options" :key="index" :label="item.label" :value="item.sign">
             </el-option>
           </el-select>
           <sub>还没有签名?点此
-            <i>新建签名</i>
+            <router-link :to="{name:'addSign'}">
+              <i>新建签名</i>
+            </router-link>
           </sub>
         </li>
         <li class="content">
@@ -33,19 +35,19 @@
         </li>
         <li style="line-height: 40px">
           <span>发送时间</span>
-          <el-radio v-model="radio" label="1" @change="instant">即时发送</el-radio>
-          <el-radio v-model="radio" label="2" @change="timing">定时发送</el-radio>
-          <el-date-picker style="margin-left:30px" v-model="value1" type="datetime" placeholder="选择日期时间" v-if="radioTime">
+          <el-radio v-model="radio" label="0" @change="instant">即时发送</el-radio>
+          <el-radio v-model="radio" label="1" @change="timing">定时发送</el-radio>
+          <el-date-picker style="margin-left:30px" v-model="value1" type="datetime" placeholder="选择日期时间" v-if="radioTime" format="yyyy-MM-dd" value-format='yyyy-MM-dd'>
           </el-date-picker>
         </li>
         <li class="sendType" style="line-height: 40px">
           <span>发送方式</span>
-          <el-radio v-model="radio1" label="1" @change="allSend">批量发送</el-radio>
-          <el-radio v-model="radio1" label="2" @change="oneSend">单条发送</el-radio>
+          <el-radio v-model="radio1" label="0" @change="allSend">批量发送</el-radio>
+          <el-radio v-model="radio1" label="1" @change="oneSend">单条发送</el-radio>
           <el-input v-model="input" placeholder="请输入手机号" v-if="phone"></el-input>
         </li>
         <li class="instructions">
-          单价:¥0.045/条 费用总计:¥0.045 余额:¥20.00 请先
+          单价:¥{{normalMarketPrice}}/条 费用总计:¥{{normalMarketPrice*tiao}} 余额:¥{{money}} 请先
           <span class="coinpay">充值</span>
         </li>
         <li class="iconfont">
@@ -53,28 +55,31 @@
             <i class="iconfont icon-dui"></i>
             <span>上传成功</span>
           </p> -->
-          <!-- <p>
+          <p v-show="sucess">
             <i class="iconfont icon-dui"></i>
-            <span>解析成功</span>
-          </p> -->
+            <span>上传成功</span>
+          </p>
           <!-- <p class="shibai">
             <i class="icon-buchenggong"></i>
             <span>解析失败</span>
           </p> -->
-          <p class="waite">
+          <p class="waite" v-show="uping">
             <i class="el-icon-loading"></i>
-            <span>解析中</span>
+            <span style="color:green">上传中</span>
           </p>
         </li>
         <li style="margin-left:100px">
-          共计上传34个手机号,成功解析32个,解析失败2个
-          <span style="color:#ff3341">下载失败详情</span>
+          共计上传{{totalNum}}个手机号,成功解析{{realNum}}个,解析失败{{loser}}个
+          <span style="color:#ff3341;cursor:pointer" @click="download">下载失败详情</span>
         </li>
         <li class="btnSend">
-          <button class="BtnDisable" @click="btn" v-if="send">发送短信</button>
+          <button class="BtnDisable" @click="oneSendInfo" v-if="send">发送短信</button>
           <p v-if="allUplaod">
-            <button class="BtnDisable">上传csv文件</button>
-            <span>下载模板(每次上传csv文件,最多只能发送50000条)</span>
+            <el-upload class="upload-demo" :show-file-list='false' accept=".csv" action="/api/sms/uploadFile" :on-success="handlePreview" :on-progress='uploadCsv' :headers="{'accesstoken':userToken, 'userAccountId':userInfo.userId}" :data='{ oldFileName:""||uploadFileName}' multiple>
+              <button class="BtnDisable" @click="upoldCsv">上传csv文件</button>
+            </el-upload>
+            <button class="BtnDisable csvsend" @click="csvSend" v-if="allUplaod">发送短信</button>
+            <span class="csvNumber">下载模板(每次上传csv文件,最多只能发送50000条)</span>
           </p>
         </li>
         <li class="txt">
@@ -101,40 +106,38 @@
 </template>
 <script type="text/ecmascript-6">
 import sendPic from '../../assets/images/Group.svg'
+import { mapGetters } from 'vuex'
 export default {
   name: 'sendInfo',
   data () {
     return {
       sendPic: sendPic,
       textarea2: '',
-      radio: '1',
-      radio1: '1',
+      radio: '0',
+      radio1: '0',
       input: '',
       value1: '',
       send: false,
       radioTime: false,
       phone: false,
       allUplaod: true,
+      uping: false,
       word: 0,
       tiao: 0,
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
+      uploadFileName: '',
+      realNum: 0,
+      totalNum: 0,
+      loser: 0,
+      sucess: false,
+      money: 0,
+      normalMarketPrice: 0,
+      options: [],
       value: ''
     }
+  },
+  created () {
+    this.getsign()
+    this.moneyNum()
   },
   computed: {
     inputArr: function () {
@@ -144,7 +147,12 @@ export default {
         arr.push(str)
       }
       return arr
-    }
+    },
+    ...mapGetters([
+      'userToken',
+      'userInfo'
+    ])
+
   },
   methods: {
     btn () {
@@ -173,6 +181,171 @@ export default {
     },
     closeWindow (e) {
       return '确认要离开? 离开后若未解析完成数据将丢失!'
+    },
+    handlePreview (file) {
+      this.sucess = true
+      this.uping = false
+      console.log(file)
+      this.uploadFileName = file.data.uploadFileName
+      this.totalNum = file.data.totalNum
+      this.realNum = file.data.realNum
+      this.loser = file.data.totalNum - file.data.realNum
+    },
+    download () {
+      window.open('/api/sms/downloadErrorTelephones?fileName=' + this.uploadFileName)
+    },
+    // 获取签名列表
+    getsign () {
+      this.$ajax.post('/api/sign/getAvalidListByAccountIdAndType', {
+        accountId: this.userInfo.userId,
+        type: 3
+      }).then((data) => {
+        console.log(data)
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (let word of res.data) {
+            let goods = {
+              sign: word.sign,
+              id: word.id
+            }
+            arr.push(goods)
+          }
+          this.options = arr
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 获取钱的数额的情况
+    moneyNum () {
+      this.$ajax.post('/api/user/getUserSMSFundInfo', {
+        telephone: this.userInfo.telephone
+      }).then(data => {
+        console.log(data)
+        if (data.data.code === '200') {
+          this.money = data.data.data.money
+          this.normalMarketPrice = data.data.data.normalMarketPrice
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 当点击上传文件触发的事件
+    uploadCsv () {
+      this.uping = true
+    },
+    upoldCsv () {
+      this.sucess = false
+    },
+    // 当上传过csv文件的时候开始发送短信  批量发送
+    csvSend () {
+      if (this.value === '' || this.textarea2 === '') {
+        this.$message({
+          message: '请正确填写内容,不能为空',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.uploadFileName === '') {
+        this.$message({
+          message: '请先操作上传csv文件',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.money < (this.normalMarketPrice * this.tiao)) {
+        this.$message({
+          message: '余额不足,请充值',
+          type: 'warning'
+        })
+        return false
+      }
+      this.$ajax.post('/api/sms/parseFile', {
+        uploadFileName: this.uploadFileName,
+        signature: this.value,
+        content: this.textarea2,
+        sendTimeType: this.radio,
+        sendType: this.radio1,
+        accountId: this.userInfo.userId,
+        type: 0,
+        totalNum: this.tiao,
+        sendTime: this.value1 || ''
+      }).then(data => {
+        console.log(data)
+        if (data.data.code === '200') {
+          this.$message({
+            message: data.data.message,
+            type: 'success',
+            onClose: () => {
+              this.$router.push({ name: 'market' })
+            }
+          })
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 单条发送的请求
+    oneSendInfo () {
+      if (this.value === '' || this.textarea2 === '') {
+        this.$message({
+          message: '请正确填写内容,不能为空',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.money < (this.normalMarketPrice * this.tiao)) {
+        this.$message({
+          message: '余额不足,请充值',
+          type: 'warning'
+        })
+        return false
+      }
+      this.$ajax.post('/api/sms/sendOneMarket', {
+        signature: this.value,
+        content: this.textarea2,
+        sendType: this.radio1,
+        sendTimeType: this.radio,
+        sendTime: this.value1 || '',
+        accountId: this.userInfo.userId,
+        type: 0,
+        telephone: this.input
+      }).then(data => {
+        console.log(data)
+        if (data.data.code === '200') {
+          this.$message({
+            message: data.data.message,
+            type: 'success',
+            onClose: () => {
+              this.$router.push({ name: 'market' })
+            }
+          })
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
     }
   },
   mounted () {
@@ -186,7 +359,7 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .sendInfo
   overflow hidden
-  min-width 1000px
+  min-width 1150px
   .sendTop
     padding 12px 0px 12px 16px
     color #525F75
@@ -246,6 +419,14 @@ export default {
           color #fb203a
       .btnSend
         margin-left 100px
+        position relative
+        .csvsend
+          position absolute
+          top 0
+          left 105px
+        .csvNumber
+          margin-top 10px
+          display inline-block
       .txt
         font-size 12px
         color #525f75

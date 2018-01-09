@@ -3,10 +3,10 @@
     <div class="nav">
       <span @click="$router.push({name: 'manger'})">签名管理</span>
       <strong>></strong>
-      <b>添加签名</b>
+      <b>修改签名</b>
     </div>
     <div class="cont">
-      <h2>添加签名
+      <h2>修改签名
         <span>注：一个企业最多申请
           <strong>5个</strong>签名
         </span>
@@ -14,7 +14,7 @@
       <ul class="addCont">
         <li v-if="add">
           <span>驳回理由</span>
-          <strong>授权书公章不清晰</strong>
+          <strong>{{remaks}}</strong>
         </li>
         <li>
           <span>签名名称</span>
@@ -44,7 +44,7 @@
         </li>
         <li>
           <span></span>
-          <b class="btn" @click="submit">提交审核</b>
+          <b class="btn" @click="submit">确认修改</b>
           <b class="btn-b">取 消</b>
         </li>
         <li>
@@ -69,16 +69,22 @@ export default {
         modelCont: ''
       },
       imgUrl: '',
-      add: false,
+      add: true,
       checked: false,
       checked1: false,
-      checked2: false
+      checked2: false,
+      remaks: '',
+      sign: '',
+      type: 0
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
     ])
+  },
+  created () {
+    this.getData()
   },
   methods: {
     uploadImg (img) {
@@ -116,6 +122,27 @@ export default {
         })
       }
     },
+    // 获取返回来的数据进行填充
+    getData () {
+      this.$ajax.post('/api/sign/getSign', {
+        id: this.$route.query.id
+      }).then((data) => {
+        console.log(data)
+        if (data.data.code === '200') {
+          this.remaks = data.data.data.remarks || '暂无数据'
+          this.addObj.signName = data.data.data.sign
+          this.type = data.data.data.type === 3 ? this.checked2 = true : data.data.data.type === 1 ? this.checked = true : this.checked1 = true
+          this.imgUrl = data.data.data.picUrl
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
     submit () {
       if (this.addObj.signName === '' || this.picUrl === '') {
         this.$message({
@@ -124,18 +151,19 @@ export default {
         })
         return false
       }
-      if (this.checked2 === false && this.checked === false) {
+      if (this.checked2 === false && this.checked === false && this.checked1 === false) {
         this.$message({
           message: '请先勾选短信类型',
           type: 'warning'
         })
         return false
       }
-      this.$ajax.post('/api/sign/addSign', {
+      this.$ajax.post('/api/sign/updateSign', {
         name: this.addObj.signName,
-        types: (this.checked2 === true && this.checked === true && this.checked1 === true) ? '1,2,3' : (this.checked2 === true && this.checked === true) ? '3,1' : (this.checked2 === true && this.checked1 === true) ? '3,2' : (this.checked1 === true && this.checked === true) ? '2,1' : this.checked2 === true ? '3' : this.checked === true ? '1' : '2',
+        type: (this.checked2 === true && this.checked === true && this.checked1 === true) ? '1,2,3' : (this.checked2 === true && this.checked === true) ? '3,1' : (this.checked2 === true && this.checked1 === true) ? '3,2' : (this.checked1 === true && this.checked === true) ? '2,1' : this.checked2 === true ? '3' : this.checked === true ? '1' : '2',
         picUrl: this.imgUrl,
-        accountId: this.userInfo.userId
+        accountId: this.userInfo.userId,
+        id: this.$route.query.id
       }).then(data => {
         console.log(data)
         if (data.data.code === '200') {

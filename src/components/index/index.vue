@@ -230,7 +230,7 @@
         </span>
       </el-dialog>
     </div>
-    <div class="confirm" v-if="0">
+    <div class="confirm" v-if="this.userInfo.status===2">
       <div class="cont">
         <div class="top">
           <i class="qiye"></i>
@@ -243,7 +243,29 @@
           </div>
         </div>
         <div class="bottom">
-          <span class="btn">去认证</span>
+          <router-link :to="{name:'certification'}">
+            <span class="btn">去认证</span>
+          </router-link>
+        </div>
+      </div>
+    </div>
+    <!-- 审核未通过 -->
+    <div class="confirm" v-if="this.userInfo.status===0">
+      <div class="cont">
+        <div class="top">
+          <i class="qiye"></i>
+          <div>
+            <p>您的认证不通过请修改后再提交</p>
+            <p>原因:营业执照不清晰</p>
+            <p>平台联系方式：
+              <span class="blue">1337384556552</span>
+            </p>
+          </div>
+        </div>
+        <div class="bottom">
+          <router-link :to="{name:'certificationChange'}">
+            <span class="btn">去修改</span>
+          </router-link>
         </div>
       </div>
     </div>
@@ -251,6 +273,7 @@
 </template>
 <script type="text/ecmascript-6">
 import echarts from 'echarts'
+import { mapGetters } from 'vuex'
 export default {
   name: 'index',
   data () {
@@ -435,6 +458,11 @@ export default {
         signType: '验证码或同孩子短信'
       }]
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   methods: {
     initCharts () {

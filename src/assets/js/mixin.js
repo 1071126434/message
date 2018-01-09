@@ -31,14 +31,14 @@ export const pageCommon = {
     // 设置pageNo
     handleCurrentChange (val) {
       this.pageNo = val
-      this.getTask()
+      this.getList()
     },
     // 查看数据api
     getList () {
       // this.loadingList = true
       this.$ajax.post(this.apiUrl, this.params).then((response) => {
         // this.loadingList = false
-        // console.log(response)
+        console.log(response)
         let mydata = response.data
         if (mydata.code === '200') {
           this.pageTotal = mydata.data.total || mydata.totalCount || mydata.data.totalCount

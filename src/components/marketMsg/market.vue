@@ -12,7 +12,7 @@
         <li>
           任务状态&nbsp; &nbsp;
           <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="(item,index) in options" :key="index" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </li>
@@ -54,15 +54,15 @@
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small">查看</el-button>
-              <!-- <el-button @click="handleNoClickNo(scope.$index, scope.row)" type="text" size="small">撤销</el-button>
-              <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small">日志</el-button>
-              <el-button @click="handleNoClickNo(scope.$index, scope.row)" type="text" size="small">删除</el-button> -->
+              <el-button v-show="scope.row.taskState==='待发送'" @click="handleNoClickNo(scope.$index, scope.row)" type="text" size="small">撤销</el-button>
+              <el-button v-show="scope.row.sendNo>0" @click="handleClickWork(scope.$index, scope.row)" type="text" size="small">日志</el-button>
+              <el-button v-show="scope.row.taskState==='已撤销'" @click="handleNoClickDele(scope.$index, scope.row)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div class="page">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+      <div class="pager">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
@@ -70,32 +70,28 @@
     <el-dialog title="任务详情" :visible.sync="dialogVisible" width="35%">
       <ul class="taskDetail">
         <li>任务号:
-          <span>jifoiejfoaimfjlafmkolaf-5454654656</span>
+          <span>{{details.taskId}}</span>
         </li>
         <li>短信内容:
-          <span>家里附近哦啊而非骄傲里附近啊</span>
+          <span>{{details.sendCont}}</span>
         </li>
         <li>发送时间:
-          <span>2017-11-29 11:11:14</span>
+          <span>{{details.sendTime}}</span>
           <span style="float:right">任务状态:
-            <em>发送完成</em>
+            <em>{{details.taskState}}</em>
           </span>
         </li>
         <li>
-          <span>上传总数: 55条</span>
-          <span style="float:right">上传成功数: 55条</span>
+          <span>发送总数: {{details.sendTotal}}条</span>
+          <span style="float:right">发送成功数: {{details.sedSucess}}条</span>
         </li>
         <li>
-          <span>发送总数: 55条</span>
-          <span style="float:right">发送成功数: 55条</span>
-        </li>
-        <li>
-          <span>发送成功率: 55%</span>
-          <span style="float:right">发送失败数: 55条</span>
+          <span>发送成功率: {{details.sedSucessPer}}%</span>
+          <span style="float:right">发送失败数: {{details.sendNo}}条</span>
         </li>
       </ul>
       <div style="width:100%;text-align:center">
-        <button class="centerBtn">关闭</button>
+        <button class="centerBtn" @click="dialogVisible = false">关闭</button>
       </div>
     </el-dialog>
     <!-- 撤销短息发送任务 -->
@@ -117,73 +113,108 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { pageCommon } from '../../assets/js/mixin.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'market',
+  mixins: [pageCommon],
   data () {
     return {
       value6: '',
       input: '',
-      currentPage4: 5,
+      currentPage: 1,
+      pageSize: 5,
       dialogVisible: false,
       centerDialogVisible: false,
       centerDialogVisibleDel: false,
       options: [{
-        value: '选项1',
-        label: '黄金糕'
+        value: '0',
+        label: '待发送'
       }, {
-        value: '选项2',
-        label: '双皮奶'
+        value: '1',
+        label: '已发送'
       }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
+        value: '2',
+        label: '已撤销'
       }],
       value: '',
-      tableData: [{
-        sendCont: 'hjdlfj梵蒂冈梵蒂冈的的说法都是sdfafas大是打发三分大师傅大沙发沙发大师傅oiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成',
-        sendTotal: '2',
-        sendNo: '5'
-      }, {
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成',
-        sendTotal: '2',
-        sendNo: '5'
-      },
-      {
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成',
-        sendTotal: '2',
-        sendNo: '5'
-      }]
+      tableData: [],
+      apiUrl: '/api/sms/getTaskListByCondition',
+      details: {}
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+      'userToken'
+    ]),
+    params () {
+      return {
+        currPageNo: this.pageNo,
+        limit: this.pageSize,
+        content: this.input,
+        accountId: this.userInfo.userId,
+        type: '0',
+        status: this.value,
+        sendStartTime: this.value6[0] ? this.value6[0] : '',
+        sendEndTime: this.value6[1] ? this.value6[1] : ''
+      }
     }
   },
   methods: {
-    handleClick (val, index) {
-      console.log(val, index)
-      // this.dialogVisible = true
+    // 当点击查看的时候触发的事件
+    handleClick (index, val) {
+      console.log(val)
+      this.dialogVisible = true
+      this.details = {
+        taskId: val.taskId,
+        sendCont: val.sendCont,
+        sendTime: val.sendTime,
+        taskState: val.taskState,
+        sendTotal: val.sendTotal,
+        sedSucess: val.sendTotal - val.sendNo,
+        sedSucessPer: (val.sendTotal - val.sendNo) / val.sendTotal,
+        sendNo: val.sendNo
+      }
       // this.centerDialogVisible = true
-      this.centerDialogVisibleDel = true
+      // this.centerDialogVisibleDel = true
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+    // 当点击撤销的时候触发的事件
+    handleNoClickNo (index, val) {
+      console.log(val)
+      this.$ajax.post('/api/sms/cancelTaskByTaskId', {
+        taskId: val.taskId
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    setList (data) {
+      let arr = []
+      for (let word of data) {
+        let goods = {
+          sendCont: word.content || '暂无数据',
+          sendType: word.sendType === '0' && word.sendTimeType === '0' ? 'csv上传发送' : word.sendType === '0' && word.sendTimeType === '1' ? 'csv上传定时发送' : word.sendType === '1' && word.sendTimeType === '0' ? '单条发送' : '单条定时发送',
+          creatTime: word.gmtCreate,
+          sendTime: word.gmtModify,
+          taskState: word.status === '0' ? '待发送' : word.status === '1' ? '发送完成' : '已撤销',
+          sendTotal: word.totalNum,
+          sendNo: word.numPerSms,
+          taskId: word.taskId,
+          sign: word.sign
+        }
+        arr.push(goods)
+      }
+      this.tableData = arr
     }
   }
 }
@@ -219,7 +250,7 @@ export default {
   .table
     margin 0px 20px
     border 1px solid #E8EBF0
-  .page
+  .pager
     float right
     padding 38px 20px 164px 0px
   .taskDetail

@@ -7,19 +7,19 @@
       <div class="line"></div>
       <ul class="search">
         <li>
-          发送时间&nbsp;&nbsp;&nbsp;
+          发送时间&nbsp; &nbsp;
           <el-date-picker v-model="value6" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
           </el-date-picker>
         </li>
         <li>
-          任务状态&nbsp;&nbsp;&nbsp;
+          任务状态&nbsp; &nbsp;
           <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="(item,index) in options" :key="index" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </li>
         <li>
-          关键字&nbsp;&nbsp;&nbsp;
+          关键字&nbsp; &nbsp;
           <el-input v-model="input" placeholder="请输入短信内容关键字"></el-input>
         </li>
         <li>
@@ -53,96 +53,92 @@
           </el-table-column>
           <el-table-column prop="sendNo" label="发送失败" align="center">
           </el-table-column>
-          <el-table-column prop="click" label="点击人数" align="center">
-          </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <router-link :to="{name:'marketEffectDetail'}">
-                <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small">查看</el-button>
-              </router-link>
-              <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small">日志</el-button>
+              <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small">查看</el-button>
+              <el-button v-show="scope.row.sendNo>0" @click="handleClickWork(scope.$index, scope.row)" type="text" size="small">日志</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div class="page">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+      <div class="pager">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { pageCommon } from '../../assets/js/mixin.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'market',
+  mixins: [pageCommon],
   data () {
     return {
       value6: '',
       input: '',
-      currentPage4: 5,
+      currentPage: 1,
+      pageSize: 5,
       dialogVisible: false,
       centerDialogVisible: false,
       centerDialogVisibleDel: false,
       options: [{
-        value: '选项1',
-        label: '黄金糕'
+        value: '0',
+        label: '待发送'
       }, {
-        value: '选项2',
-        label: '双皮奶'
+        value: '1',
+        label: '已发送'
       }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
+        value: '2',
+        label: '已撤销'
       }],
       value: '',
-      tableData: [{
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成',
-        sendTotal: '2',
-        sendNo: '5',
-        click: 5
-      }, {
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成',
-        sendTotal: '2',
-        sendNo: '5',
-        click: 5
-      },
-      {
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成',
-        sendTotal: '2',
-        sendNo: '5',
-        click: 5
-      }]
+      tableData: [],
+      apiUrl: '/api/sms/getTaskListByCondition',
+      details: {}
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+      'userToken'
+    ]),
+    params () {
+      return {
+        currPageNo: this.pageNo,
+        limit: this.pageSize,
+        content: this.input,
+        accountId: this.userInfo.userId,
+        type: '1',
+        status: this.value,
+        sendStartTime: this.value6[0] ? this.value6[0] : '',
+        sendEndTime: this.value6[1] ? this.value6[1] : ''
+      }
     }
   },
   methods: {
-    handleClick (val, index) {
-      console.log(val, index)
-      // this.dialogVisible = true
-      // this.centerDialogVisible = true
-      this.centerDialogVisibleDel = true
+    // 当点击查看的时候触发的事件
+    handleClick (index, val) {
+      this.$router.push({ name: 'marketEffectDetail' })
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    setList (data) {
+      let arr = []
+      for (let word of data) {
+        let goods = {
+          sendCont: word.content || '暂无数据',
+          sendType: word.sendType === '0' && word.sendTimeType === '0' ? 'csv上传发送' : word.sendType === '0' && word.sendTimeType === '1' ? 'csv上传定时发送' : word.sendType === '1' && word.sendTimeType === '0' ? '单条发送' : '单条定时发送',
+          creatTime: word.gmtCreate,
+          sendTime: word.gmtModify,
+          taskState: word.status === '0' ? '待发送' : word.status === '1' ? '发送完成' : '已撤销',
+          sendTotal: word.totalNum,
+          sendNo: word.numPerSms,
+          taskId: word.taskId,
+          sign: word.sign
+        }
+        arr.push(goods)
+      }
+      this.tableData = arr
     }
   }
 }
@@ -186,7 +182,7 @@ export default {
   .table
     margin 0px 20px
     border 1px solid #E8EBF0
-  .page
+  .pager
     float right
     padding 38px 20px 164px 0px
   .taskDetail

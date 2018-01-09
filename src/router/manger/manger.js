@@ -8,6 +8,11 @@ const addSign = (resolve) => {
     resolve(module)
   })
 }
+const Updata = (resolve) => {
+  import('@/components/manger/updata').then((module) => {
+    resolve(module)
+  })
+}
 
 const manger = [{
   path: 'home/manger',
@@ -19,6 +24,11 @@ const manger = [{
   component: addSign,
   name: 'addSign',
   meta: { title: '签名管理-添加签名' }
+}, {
+  path: 'home/manger/updata',
+  component: Updata,
+  name: 'updata',
+  meta: { title: '签名管理-修改签名' }
 }]
 
 export default manger

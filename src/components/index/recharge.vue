@@ -24,7 +24,7 @@
           </li>
           <li class="elbtn">
             <span></span>
-            <el-button type="primary" @click="pay=2">充 值</el-button>
+            <el-button type="primary" @click="coinPay">充 值</el-button>
           </li>
           <li>
             <a>
@@ -73,6 +73,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
 export default {
   name: 'recharge',
   data () {
@@ -81,12 +82,22 @@ export default {
       pay: 1
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
   mounted () {
     // 防止页面后退
     history.pushState(null, null, document.URL)
     window.addEventListener('popstate', function () {
       history.pushState(null, null, document.URL)
     })
+  },
+  methods: {
+    coinPay () {
+      window.open('/api/alipay/recharge?amount=' + this.rechargeNum + '&type=' + 1 + '&accountId=' + this.userInfo.userId + '&callBack=http://10.0.0.34:8099/home/index')
+    }
   }
 }
 </script>

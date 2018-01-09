@@ -12,6 +12,7 @@ export const uploadPromise = new Promise((resolve, reject) => {
 })
 // 上传图片
 export function uploadFile (data, file) {
+  // console.log(data)
   let OSS = window.OSS.Wrapper
   let name = file.lastModified + md5(file.name)
   let client = new OSS({

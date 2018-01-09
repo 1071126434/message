@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<style>
+  header{
+    color: hsla(20, 20%, 20%, 1);
+  }
+</style>
+<body>
+
+  <nav>
+    <a href="">第一个</a><a href="">第二个</a><a href="">第三个</a><a href="">第四个</a>
+  </nav>
+  <header>我是头部</header>
+  <aside>我是侧边栏</aside>
+  <article>我是文章</article>
+  <footer>我是底部</footer>
+  <input type="color">
+  <input type="url">
+  <input type="range">
+  <input type="tel">
+  <form action="">
+      email:<input type="email" required>
+      <br>
+      <input type="submit">
+  </form>
+  
+</body>
+<script>
+  window.ononline = function(){
+      alert('网络已连接');
+  }
+// 网络断开
+window.onoffline= function(){
+      alert('网络已断开');
+  }
+</script>
+<!-- <script>
+  navigator.geolocation.getCurrentPosition(function(position){
+    console.log(1111)
+    // 定位成功会调用该方法
+   console.log( position.coords.latitude )
+    position.coords.longitude 
+    position.coords.accuracy
+    position.coords.altitude 
+}, function(error){
+    // 定位失败会调用该方法
+    // error 是错误信息
+}, )
+</script> -->
+</html>

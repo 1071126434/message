@@ -4,7 +4,7 @@
       <h1>企业信息认证</h1>
       <p class="state">审核状态:
         <span v-if="this.userInfo.status===2">未认证</span>
-        <span v-else>已认证</span>
+        <span v-else>未通过</span>
       </p>
       <div class="line"></div>
       <ul>
@@ -55,8 +55,8 @@
           </el-upload>
         </li>
         <li style="text-align:center;margin-top:20px">
-          <el-button type="info" disabled v-show="status">提交审核</el-button>
-          <el-button type="primary" v-show="status_1" style="margin-left:-1px" @click="submit">提交审核</el-button>
+          <!-- <el-button type="info" disabled v-show="status">提交审核</el-button> -->
+          <el-button type="primary" style="margin-left:-1px" @click="submit">提交审核</el-button>
           <p class="wordText">注意:提交审核后,系统将会在一个工作日内完成审核</p>
         </li>
       </ul>
@@ -86,7 +86,8 @@ export default {
       itemCity: null,
       zone: [],
       itemZone: null,
-      isCanUpload: false
+      isCanUpload: false,
+      getObj: {}
     }
   },
   computed: {
@@ -95,7 +96,7 @@ export default {
     ])
   },
   created () {
-    this.Provinces()
+    this.getSubmit()
   },
   watch: {
     isCanUpload (val) {
@@ -151,6 +152,39 @@ export default {
           this.isCanUpload = true
         })
       }
+    },
+    // 当认证被驳回的时候,获取到能够修改的数据进行一个展示
+    getSubmit () {
+      this.$ajax.post('/api/companyCertify/getCompanyInfo', {
+        accountId: this.userInfo.userId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data.data
+        if (data.data.code === '200') {
+          this.companyName = res.companyName
+          this.itemPro = res.proviceDetail
+          this.itemCity = res.cityDetail
+          this.itemZone = res.areaDetail
+          this.input = res.addressDetail
+          this.input2 = res.companyCreditCode
+          this.input3 = res.legalPersonName
+          this.input4 = res.concatName
+          this.input5 = res.concatPhone
+          this.input6 = res.concatEmail
+          this.imageUrl = res.businessLicenceUrl
+          this.$message({
+            message: res.comment || '暂无数据',
+            type: 'warning'
+          })
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
     },
     submit () {
       this.$ajax.post('/api/companyCertify/submit', {

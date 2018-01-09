@@ -33,12 +33,12 @@ const marketMsg = [{
   path: 'home/marketEffect',
   component: marketEffect,
   name: 'marketEffect',
-  meta: { title: '效果追踪短信' }
+  meta: { title: '效果追踪短信列表' }
 }, {
   path: 'home/market/sendInfo',
   component: SendInfo,
   name: 'sendInfo',
-  meta: { title: '发送效果追踪短信' }
+  meta: { title: '发送营销短信' }
 }, {
   path: 'home/marketEffect/marketEffectDetail',
   component: MarketEffectDetail,
@@ -48,7 +48,7 @@ const marketMsg = [{
   path: 'home/marketEffect/marketEffectSend',
   component: MarketEffectSend,
   name: 'marketEffectSend',
-  meta: { title: '发送营销短信2' }
+  meta: { title: '发送效果追踪短信' }
 }]
 
 export default marketMsg

@@ -27,21 +27,24 @@
           <el-table-column prop="status" label="操作" align="center">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #36A5FF">修改</el-button>
-              <el-button type="text" size="small" style="color: #93A2BA">删除</el-button>
+              <el-button type="text" size="small" style="color: #93A2BA" @click="detel(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div class="pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { pageCommon } from '../../assets/js/mixin'
+import { mapGetters } from 'vuex'
 export default {
   name: 'manger',
+  mixins: [pageCommon],
   data () {
     return {
       currentPage: 1,
@@ -49,18 +52,67 @@ export default {
         signName: '注册验证码',
         signType: '验证码',
         status: '已通过'
-      }]
+      }],
+      apiUrl: '/api/homepage/getSignList',
+      pageTotal: 0,
+      pageSize5: 5
     }
   },
+  computed: {
+    params () {
+      return {
+        pageNo: this.pageNo,
+        pageSize: this.pageSize,
+        userId: this.userInfo.userId
+      }
+    },
+    ...mapGetters([
+      'userToken',
+      'userInfo'
+    ])
+  },
   methods: {
-    handleClick (row) {
-      console.log(row)
+    setList (data) {
+      let arr = []
+      for (let word of data) {
+        let goods = {
+          signName: word.sign || '暂无数据',
+          signType: word.type === 3 ? '营销短信' : '系统短信' || '暂无数据',
+          status: word.status === 0 ? '待审核' : word.status === 1 ? '已通过' : '未通过' || '暂无数据',
+          id: word.id
+        }
+        arr.push(goods)
+      }
+      this.modelArr = arr
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+    // 签名删除的接口
+    detel (modelArr) {
+      console.log(modelArr)
+      this.$ajax.post('/api/sign/deleteSign', {
+        id: modelArr.id,
+        accountId: this.userInfo.userId
+      }).then(data => {
+        console.log(data)
+        if (data.data.code === '200') {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.getList()
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    // 签名修改的接口
+    handleClick (val) {
+      console.log(val)
+      this.$router.push({ name: 'updata', query: { id: val.id } })
     }
   }
 }

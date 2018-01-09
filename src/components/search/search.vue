@@ -7,17 +7,17 @@
         <el-input v-model="phone" placeholder="填写手机号" class="inp" style="width:150px"></el-input>
         <span>短信类型</span>
         <el-select v-model="msgType" placeholder="请选择" class="inp">
-          <el-option label="通知" value="0">
+          <el-option label="通知" value="1">
           </el-option>
-          <el-option label="验证码" value="1">
+          <el-option label="验证码" value="2">
           </el-option>
-          <el-option label="营销短信" value="2">
+          <el-option label="营销短信" value="3">
           </el-option>
         </el-select>
         <span>活动时间</span>
-        <el-date-picker v-model="time" type="date" placeholder="选择日期" class="inp">
+        <el-date-picker v-model="time" type="date" placeholder="选择日期" class="inp" format="yyyy-MM-dd" value-format='yyyy-MM-dd'>
         </el-date-picker>
-        <span class="btn">查询</span>
+        <span class="btn" @click="search">查询</span>
       </div>
       <div class="tables">
         <el-table :data="searchArr" style="width: 100%">
@@ -39,13 +39,14 @@
         </el-table>
       </div>
       <div class="pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
 export default {
   name: 'search',
   data () {
@@ -53,6 +54,9 @@ export default {
       currentPage: 1,
       phone: '',
       msgType: '1',
+      pageSize: 5,
+      pageNo: 1,
+      totalCount: 0,
       time: '',
       searchArr: [{
         phone: '186671899665',
@@ -63,12 +67,64 @@ export default {
       }]
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
   methods: {
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
+    },
+    search () {
+      if (navigator.onLine) {
+        console.log('online')
+      } else {
+        console.log('offline')
+      }
+      this.$ajax.post('/api/homepage/getByPhoneTypeTime', {
+        phone: this.phone,
+        pageNo: this.pageNo,
+        pageSize: this.pageSize,
+        type: this.msgType,
+        userId: this.userInfo.userId,
+        time: this.time
+      }).then((data) => {
+        let res = data.data
+        this.totalCount = res.data.totalCount
+        if (res.code === '200') {
+          let arr = []
+          // if (res.data) {
+          for (let word of res.data.withdrawApplys) {
+            let goods = {
+              phone: word.userTelephone,
+              moneyNum: word.actualAmount,
+              bankNum: word.bankCardNo,
+              bank: word.bankName,
+              name: word.userName,
+              time: word.gmtCreate,
+              withdrawApplyId: word.withdrawApplyId,
+              state: word.isExport === '0' ? '未导出' : '已导出',
+              state1: word.isStoped,
+              comment: word.comment,
+              moneyType: word.withdrawType === '0' ? '本金提现' : '提前支取'
+            }
+            arr.push(goods)
+          }
+          // }
+          this.tableDataBuy = arr
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('网络错误，刷新下试试')
+      })
     }
   }
 }
