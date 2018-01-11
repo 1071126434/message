@@ -3,18 +3,24 @@
     <div class="nav">
       <span @click="$router.push({name: 'modelManger'})">模板管理</span>
       <strong>></strong>
-      <b>添加模板</b>
+      <b v-if="$route.query.fix">修改模板</b>
+      <b v-else>添加模板</b>
     </div>
     <div class="cont">
-      <h2>添加模板
+      <h2 v-if="$route.query.fix">修改模板
+        <span>注：一个企业最多申请
+          <strong>10个</strong>模板
+        </span>
+      </h2>
+      <h2 v-else>添加模板
         <span>注：一个企业最多申请
           <strong>10个</strong>模板
         </span>
       </h2>
       <ul class="addCont">
-        <li>
+        <li v-if="addObj.reason">
           <span>驳回理由</span>
-          <strong>模板内容不对</strong>
+          <strong>{{ addObj.reason }}</strong>
         </li>
         <li>
           <span>模板名称</span>
@@ -34,7 +40,7 @@
         </li>
         <li>
           <span></span>
-          <b class="btn" @click="addModel">提交审核</b>
+          <b class="btn" @click="submit">提交审核</b>
           <b class="btn-b">取 消</b>
         </li>
         <li>
@@ -54,9 +60,11 @@ export default {
   data () {
     return {
       addObj: {
+        reason: '',
         modelName: '',
         modelType: '1',
-        modelCont: ''
+        modelCont: '',
+        code: ''
       }
     }
   },
@@ -66,12 +74,20 @@ export default {
     ])
   },
   methods: {
+    submit () {
+      if (this.$route.query.fix) {
+        this.fixModel()
+      } else {
+        this.addModel()
+      }
+    },
+    // 添加模板
     addModel () {
       this.$ajax.post('/api/template/addTemplate', {
         type: this.addObj.modelType,
         name: this.addObj.modelName,
         content: this.addObj.modelCont,
-        accountId: this.userInfo.account
+        accountId: this.userInfo.userId
       }).then((data) => {
         let res = data.data
         if (res.code === '200') {
@@ -79,6 +95,7 @@ export default {
             message: '添加成功!',
             type: 'success'
           })
+          this.$router.push({ name: 'modelManger' })
         } else {
           this.$message({
             message: res.message,
@@ -88,6 +105,45 @@ export default {
       }).catch((error) => {
         this.$message.error(error)
       })
+    },
+    // 修改模板
+    fixModel () {
+      this.$ajax.post('/api/template/updateTemplate', {
+        type: this.addObj.modelType,
+        code: this.addObj.code,
+        name: this.addObj.modelName,
+        content: this.addObj.modelCont,
+        accountId: this.userInfo.userId
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+          this.$message({
+            message: '修改成功!',
+            type: 'success'
+          })
+          this.$router.push({ name: 'modelManger' })
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'warning'
+          })
+        }
+      }).catch((error) => {
+        this.$message.error(error)
+      })
+    }
+  },
+  mounted () {
+    if (this.$route.query.fix) {
+      console.log(1)
+      let row = JSON.parse(sessionStorage.getItem('_fixModelInfo_'))
+      this.addObj = {
+        reason: row.errorInfo ? row.errorInfo : '',
+        modelName: row.name,
+        modelType: row.type + '',
+        modelCont: row.content,
+        code: row.code
+      }
     }
   }
 }
