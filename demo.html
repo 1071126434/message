@@ -10,6 +10,16 @@
   header{
     color: hsla(20, 20%, 20%, 1);
   }
+  .shadow{
+    text-shadow: 10px 10px 5px red
+  }
+  .text{
+    text-shadow: 1px 1px #fff,-1px -1px #000;
+  }
+  aside{
+    border: 1px solid red ;
+    box-shadow: 5px 5px 20px rgb(58, 16, 23)
+  }
 </style>
 <body>
 
@@ -17,7 +27,7 @@
     <a href="">第一个</a><a href="">第二个</a><a href="">第三个</a><a href="">第四个</a>
   </nav>
   <header>我是头部</header>
-  <aside>我是侧边栏</aside>
+
   <article>我是文章</article>
   <footer>我是底部</footer>
   <input type="color">
@@ -29,7 +39,12 @@
       <br>
       <input type="submit">
   </form>
-  
+
+
+
+  <p class="shadow">文字阴影</p>
+  <p class="text">文字阴影</p>
+  <aside>我是侧边栏</aside>
 </body>
 <script>
   window.ononline = function(){

@@ -1,14 +1,14 @@
 <template>
   <div class="boxWrap">
     <div class="market">
-      <h1>营销短信</h1>
+      <h1>效果追踪短信</h1>
       <p class="right">该服务能够获取打开链接记录,需付费,服务费按条收费,每条发送成功的短信收费(包含服务费)为
         <span>0.045</span>元</p>
       <div class="line"></div>
       <ul class="search">
         <li>
           发送时间&nbsp; &nbsp;
-          <el-date-picker v-model="value6" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+          <el-date-picker v-model="value6" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy-MM-dd" value-format='yyyy-MM-dd'>
           </el-date-picker>
         </li>
         <li>
@@ -23,14 +23,14 @@
           <el-input v-model="input" placeholder="请输入短信内容关键字"></el-input>
         </li>
         <li>
-          <el-button type="primary">搜索</el-button>
+          <el-button type="primary" @click="search">搜索</el-button>
         </li>
       </ul>
       <div class="btns">
         <router-link :to="{name:'marketEffectSend'}">
           <el-button>发送营销短信</el-button>
         </router-link>
-        <el-button style="float:right">导出</el-button>
+        <el-button style="float:right" @click="exports">导出</el-button>
       </div>
       <div class="table">
         <el-table :data="tableData" style="width: 100%">
@@ -53,9 +53,13 @@
           </el-table-column>
           <el-table-column prop="sendNo" label="发送失败" align="center">
           </el-table-column>
+          <el-table-column prop="click" label="点击人数" align="center">
+          </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small">查看</el-button>
+              <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='发送完成'">查看</el-button>
+              <el-button @click="handleClickNo(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='待发送'">撤销</el-button>
+              <el-button @click="handleClickdele(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='已撤销'">删除</el-button>
               <el-button v-show="scope.row.sendNo>0" @click="handleClickWork(scope.$index, scope.row)" type="text" size="small">日志</el-button>
             </template>
           </el-table-column>
@@ -70,7 +74,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { pageCommon } from '../../assets/js/mixin.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'market',
   mixins: [pageCommon],
@@ -112,15 +116,73 @@ export default {
         accountId: this.userInfo.userId,
         type: '1',
         status: this.value,
-        sendStartTime: this.value6[0] ? this.value6[0] : '',
-        sendEndTime: this.value6[1] ? this.value6[1] : ''
+        sendStartTime: this.value6 ? this.value6[0] : '',
+        sendEndTime: this.value6 ? this.value6[1] : ''
       }
     }
   },
   methods: {
+    ...mapActions([
+      'setSellerInfo'
+    ]),
+    exports () {
+      let abc = window.open('/api/market/downloadSpecialTasksByAccountId?accountId=' + this.userInfo.userId + '&sendStartTime=' + (this.value6 ? this.value6[0] : '') + '&sendEndTime=' + (this.value6 ? this.value6[1] : '') + '&status=' + this.value + '&type=1' + '&content=' + this.input + '&currPageNo=' + this.pageNo + '&limit=' + this.pageSize)
+      console.log(abc)
+    },
+    search () {
+      this.getList()
+    },
     // 当点击查看的时候触发的事件
     handleClick (index, val) {
+      this.setSellerInfo(val)
       this.$router.push({ name: 'marketEffectDetail' })
+    },
+    // 当点击撤销触发的事件
+    handleClickNo (index, val) {
+      this.$ajax.post('/api/sms/cancelTaskByTaskId', {
+        taskId: val.taskId
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+          this.$message({
+            message: '已成功撤销',
+            type: 'success'
+          })
+          this.getList()
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 当点击删除的时候触发的事件
+    handleClickdele (index, val) {
+      console.log(val)
+      this.$ajax.post('/api/sms/deleteTaskByTaskId', {
+        taskId: val.taskId
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+          this.$message({
+            message: '已成功删除',
+            type: 'success'
+          })
+          this.getList()
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
     },
     setList (data) {
       let arr = []
@@ -131,10 +193,15 @@ export default {
           creatTime: word.gmtCreate,
           sendTime: word.gmtModify,
           taskState: word.status === '0' ? '待发送' : word.status === '1' ? '发送完成' : '已撤销',
-          sendTotal: word.totalNum,
-          sendNo: word.numPerSms,
+          sendTotal: word.totalNum || 0,
+          sendNo: word.failNum || 0,
           taskId: word.taskId,
-          sign: word.sign
+          sign: word.sign,
+          successNum: word.successNum || 0,
+          click: word.clickPvNum || 0,
+          content: word.content,
+          successNumLv: (word.successNum || 0) / (word.totalNum || 0),
+          clickLv: (word.clickPvNum || 0) / (word.totalNum || 0)
         }
         arr.push(goods)
       }

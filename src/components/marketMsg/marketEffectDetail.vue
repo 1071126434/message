@@ -13,41 +13,36 @@
       <div class="flex">
         <ul>
           <li>任务状态:
-            <span style="color:#24D668">已发送</span>
+            <span style="color:#24D668">{{this.sellerInfo.taskState}}</span>
           </li>
           <li>发送时间:
-            <span>20174-11-55 12:00:00</span>
+            <span>{{this.sellerInfo.sendTime}}</span>
           </li>
           <li>任务号:
-            <span>5445454444456546</span>
+            <span>{{this.sellerInfo.taskId}}</span>
           </li>
           <li class="widthContent">短信内容:
-            <span>拉夫卡是否好看是否开始恢复还是好客山东发is复活甲爱是否假房东阿双</span>
-          </li>
-        </ul>
-        <ul>
-          <li>上传成功数:
-            <span>55条</span>
-          </li>
-          <li>发送成功数:
-            <span>55条</span>
-          </li>
-          <li>上传失败数:
-            <span>55条</span>
-          </li>
-          <li>发送成功率:
-            <span>55条</span>
+            <span>{{this.sellerInfo.sendCont}}</span>
           </li>
         </ul>
         <ul>
           <li>发送总数:
-            <span>55条</span>
+            <span>{{this.sellerInfo.sendTotal}}条</span>
           </li>
+          <li>发送成功数:
+            <span>{{this.sellerInfo.successNum}}条</span>
+          </li>
+          <li>发送成功率:
+            <!-- <span>{{this.$route.query.successNumLv|reverse}}%</span> -->
+            <span>{{this.sellerInfo.successNumLv|reverse}}%</span>
+          </li>
+        </ul>
+        <ul>
           <li>点击数:
-            <span>55条</span>
+            <span>{{this.sellerInfo.click}}条</span>
           </li>
           <li>点击率:
-            <span>55条</span>
+            <span>{{this.sellerInfo.clickLv}}%</span>
           </li>
         </ul>
       </div>
@@ -95,20 +90,20 @@
           <li>
             发送状态&nbsp;&nbsp;
             <el-select v-model="value" placeholder="请选择">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+              <el-option v-for="(item,index) in options" :key="index" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </li>
           <li>
             是否打开链接&nbsp;&nbsp;
-            <el-select v-model="value" placeholder="请选择">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            <el-select v-model="value1" placeholder="请选择">
+              <el-option v-for="(item,index) in options1" :key="index" :label="item.label" :value="item.value1">
               </el-option>
             </el-select>
           </li>
           <li>
             <el-button type="primary">搜索</el-button>
-            <i class="el-icon-download"></i>
+            <i class="el-icon-download" @click="exports"></i>
           </li>
         </ul>
         <div class="table">
@@ -126,7 +121,7 @@
           </el-table>
         </div>
         <div class="page">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
           </el-pagination>
         </div>
       </div>
@@ -135,14 +130,28 @@
 </template>
 <script type="text/ecmascript-6">
 import echart from 'echarts'
+import Vue from 'vue'
+import { mapGetters } from 'vuex'
+import { pageCommon } from '../../assets/js/mixin'
 export default {
   name: 'marketEffectDetail',
+  mixins: [pageCommon],
   data () {
+    Vue.filter('reverse', function (message) {
+      if (message === 1) {
+        return message + '00'
+      } else {
+        return message.toFixed(2) * 100
+      }
+    })
     return {
       isCheack_2: true,
       isCheack_3: false,
       pointOne: true,
       pointTwo: false,
+      pageSize: 5,
+      currentPage: 1,
+      apiUrl: '/api/market/getWaitingSendSMS',
       sendOption: {
         tooltip: {
           trigger: 'axis'
@@ -169,7 +178,7 @@ export default {
                 color: '#40B6FF'
               }
             },
-            data: [1, 3, 2, 5, 3, 2, 0, 6, 10, 20, 30, 10, 6]
+            data: [11, 11, 15, 13, 12, 13, 10, 5, 6, 7, 8]
           }
         ]
       },
@@ -180,7 +189,7 @@ export default {
         },
         series: [
           {
-            name: '数据统计',
+            name: '点击率',
             type: 'pie',
             radius: ['50%', '70%'],
             color: ['#40B6FF ', '#FF9F00'],
@@ -204,8 +213,8 @@ export default {
               }
             },
             data: [
-              { value: 335, name: '点击数' },
-              { value: 310, name: '未点击数' }
+              { value: 10, name: '点击数' },
+              { value: 50, name: '未点击数' }
             ]
           }
         ]
@@ -217,7 +226,7 @@ export default {
         },
         series: [
           {
-            name: '数据统计',
+            name: '发送成功率',
             type: 'pie',
             radius: ['50%', '70%'],
             color: ['#0F81EB ', '#4A55C1'],
@@ -254,45 +263,80 @@ export default {
       centerDialogVisible: false,
       centerDialogVisibleDel: false,
       options: [{
-        value: '选项1',
-        label: '黄金糕'
+        value: '0',
+        label: '待发送'
       }, {
-        value: '选项2',
-        label: '双皮奶'
+        value: '1',
+        label: '已发送'
       }, {
-        value: '选项3',
-        label: '蚵仔煎'
+        value: '2',
+        label: '发送成功'
       }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
+        value: '3',
+        label: '发送失败'
       }],
       value: '',
-      tableData: [{
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成'
+      value1: '',
+      options1: [{
+        value1: '0',
+        label: '否'
       }, {
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成'
-      },
-      {
-        sendCont: 'hjdlfjoiejfo',
-        sendType: '单挑发送',
-        creatTime: '2019-10-10',
-        sendTime: '2019-10-10',
-        taskState: '发送完成'
-      }]
+        value1: '1',
+        label: '是'
+      }],
+      tableData: []
     }
   },
+  computed: {
+    ...mapGetters([
+      'sellerInfo'
+    ]),
+    params () {
+      return {
+        taskId: this.sellerInfo.taskId,
+        pageSize: this.pageSize,
+        pageNo: this.pageNo,
+        phoneNo: this.input,
+        smsStatus: this.value,
+        whetherOpenUrl: this.value1
+      }
+    }
+  },
+  created () {
+    this.$ajax.post('/api/market/getViewCountByTaskId', {
+      taskId: this.sellerInfo.taskId,
+      pageSize: 144,
+      pageNo: 1
+    }).then((data) => {
+      console.log(data)
+      let res = data.data
+      if (res.code === '200') {
+        let arr = []
+        let arr1 = []
+        for (let word of res.data.datas) {
+          arr.push(word.pvNum)
+          arr1.push((word.gmtModify).substr(11, 5))
+        }
+        this.sendOption.series[0].data = arr
+        this.sendOption.xAxis.data = arr1
+        this.initEchart()
+        console.log(this.sendOption.series[0].data, this.sendOption.xAxis.data)
+      } else {
+        this.$message({
+          message: data.data.message,
+          type: 'warning'
+        })
+      }
+    }).catch((err) => {
+      console.log(err)
+      this.$message.error('服务器错误！')
+    })
+    // console.log(this.sendOption.series[0].data, this.sendOption.xAxis.data)
+  },
   methods: {
+    exports () {
+      window.open('/api/market/downloadTaskDetailByTaskId?taskId=' + this.sellerInfo.taskId + '&pageNo=' + this.pageNo + '&pageSize=' + this.pageSize + '&phoneNo=' + this.input + '&smsStatus' + this.value + '&whetherOpenUrl' + this.value1)
+    },
     initEchart () {
       this.$refs.echarts.style.height = '300px'
       let sendChart = echart.init(this.$refs.echarts)
@@ -308,12 +352,6 @@ export default {
       let msg1 = echart.init(this.$refs.sucessNum)
       msg1.setOption(this.setSucess)
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
-    },
     isCheack () {
       this.isCheack_2 = true
       this.isCheack_3 = false
@@ -326,6 +364,20 @@ export default {
       this.pointOne = false
       this.pointTwo = true
       this.initTwo()
+    },
+    setList (data) {
+      let arr = []
+      for (let word of data) {
+        let goods = {
+          sendCont: word.phoneNo || '暂无数据',
+          sendType: word.smsStatus === '0' ? '待发送' : word.smsStatus === '1' ? '已发送' : word.sendType === '2' ? '发送成功' : '发送失败',
+          creatTime: word.sendTime,
+          sendTime: word.whetherOpenUrl === 0 ? '是' : '否',
+          taskState: word.openUrlTime || ''
+        }
+        arr.push(goods)
+      }
+      this.tableData = arr
     }
   },
   mounted () {

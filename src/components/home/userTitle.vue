@@ -6,10 +6,12 @@
           <i class="iconfont icon-qi"></i>
           <strong>未认证</strong>
         </span>
-        <span class="record" v-if="userInfo.status===1">
-          <i class="iconfont icon-qi1"></i>
-          <strong>已认证</strong>
-        </span>
+        <router-link :to="{name:'sucessChange'}">
+          <span class="record" v-if="userInfo.status===1">
+            <i class="iconfont icon-qi1"></i>
+            <strong>已认证</strong>
+          </span>
+        </router-link>
         <span class="record" v-if="userInfo.status===0">
           <i class="iconfont icon-qi2"></i>
           <strong>认证驳回</strong>

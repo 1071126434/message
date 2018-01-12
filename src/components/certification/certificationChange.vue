@@ -53,6 +53,8 @@
             <img v-if="imageUrl" :src="imageUrl" class="avatar" width="182px" height="182px">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
+          <p class="bigPic" @click="lookImg(imageUrl)">
+            <i class="el-icon-zoom-in"></i>放大图片</p>
         </li>
         <li style="text-align:center;margin-top:20px">
           <!-- <el-button type="info" disabled v-show="status">提交审核</el-button> -->
@@ -60,14 +62,21 @@
           <p class="wordText">注意:提交审核后,系统将会在一个工作日内完成审核</p>
         </li>
       </ul>
+      <div v-show="showLookImg ">
+        <lookImg :imgUrl="lookImgUrl " @close="showLookImg=false "></lookImg>
+      </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { uploadPromise, uploadFile, getFileWidthAndHeight } from '../../assets/js/upload'
 import { mapGetters } from 'vuex'
+import LookImg from '../../base/lookImg/lookImg'
 export default {
   name: 'certification',
+  components: {
+    LookImg
+  },
   data () {
     return {
       input: '',
@@ -87,7 +96,9 @@ export default {
       zone: [],
       itemZone: null,
       isCanUpload: false,
-      getObj: {}
+      getObj: {},
+      showLookImg: false,
+      lookImgUrl: ''
     }
   },
   computed: {
@@ -106,6 +117,11 @@ export default {
     }
   },
   methods: {
+    lookImg (url) {
+      console.log(url)
+      this.showLookImg = true
+      this.lookImgUrl = url
+    },
     isCont () {
       if (this.itemPro !== '' && this.companyName !== '' && this.itemCity !== '' && this.itemZone !== '' && this.input !== '' && this.input2 !== '' && this.input3 !== '' && this.input4 !== '' && this.input5 !== '' && this.input6 !== '') {
         this.status = false
@@ -174,7 +190,9 @@ export default {
           this.imageUrl = res.businessLicenceUrl
           this.$message({
             message: res.comment || '暂无数据',
-            type: 'warning'
+            type: 'warning',
+            duration: 0,
+            showClose: true
           })
         } else {
           this.$message({
@@ -382,4 +400,10 @@ export default {
         text-align right
         margin-right 30px
         padding-bottom 93px
+      .bigPic
+        font-size 12px
+        color #525F75
+        margin-left 50px
+        margin-top 5px
+        cursor pointer
 </style>

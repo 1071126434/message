@@ -34,13 +34,13 @@
             <em>56</em>个字为一条短信)</p>
         </li>
         <li>
-          <textarea name="" class="inputUrl" cols="40" rows="3" placeholder="请在此处输入URL链接" v-model="textarea3"></textarea>
+          <textarea name="" class="inputUrl" cols="40" rows="3" placeholder="请在此处输入URL链接,实例:http:// +url" v-model="textarea3"></textarea>
         </li>
         <li style="line-height: 40px">
           <span>发送时间</span>
           <el-radio v-model="radio" label="0" @change="instant">即时发送</el-radio>
           <el-radio v-model="radio" label="1" @change="timing">定时发送</el-radio>
-          <el-date-picker style="margin-left:30px" v-model="value1" type="datetime" placeholder="选择日期时间" v-if="radioTime" format="yyyy-MM-dd" value-format='yyyy-MM-dd'>
+          <el-date-picker style="margin-left:30px" v-model="value1" type="datetime" placeholder="选择日期时间" v-if="radioTime" format="yyyy-MM-dd HH:mm:ss" value-format='yyyy-MM-dd HH:mm:ss'>
           </el-date-picker>
         </li>
         <li class="sendType" style="line-height: 40px">
@@ -274,7 +274,7 @@ export default {
         })
         return false
       }
-      if ((this.textarea2).indexOf('$' + '{URL}') < 0) {
+      if ((this.textarea2).indexOf('$' + '{URL}') < 0 || (this.textarea3).indexOf('http://') < 0) {
         this.$message({
           message: '发送的内容格式错误,请参照示例修改',
           type: 'warning'
@@ -335,7 +335,7 @@ export default {
         })
         return false
       }
-      if ((this.textarea2).indexOf('$' + '{URL}') < 0) {
+      if ((this.textarea2).indexOf('$' + '{URL}') < 0 || (this.textarea3).indexOf('http://') < 0) {
         this.$message({
           message: '发送的内容格式错误,请参照示例修改',
           type: 'warning'

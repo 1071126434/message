@@ -8,6 +8,11 @@ const CertificationChange = (resolve) => {
     resolve(module)
   })
 }
+const SucessChange = (resolve) => {
+  import('@/components/certification/sucessChange').then((module) => {
+    resolve(module)
+  })
+}
 
 const certification = [{
   path: 'home/certification',
@@ -20,6 +25,12 @@ const certification = [{
   component: CertificationChange,
   name: 'certificationChange',
   meta: { title: '修改认证' }
+},
+{
+  path: 'home/sucessChange',
+  component: SucessChange,
+  name: 'sucessChange',
+  meta: { title: '通过后修改' }
 }]
 
 export default certification

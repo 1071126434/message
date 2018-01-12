@@ -6,7 +6,7 @@
       <ul class="search">
         <li>
           发送时间&nbsp; &nbsp;
-          <el-date-picker v-model="value6" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+          <el-date-picker v-model="value6" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy-MM-dd" value-format='yyyy-MM-dd'>
           </el-date-picker>
         </li>
         <li>
@@ -21,14 +21,14 @@
           <el-input v-model="input" placeholder="请输入短信内容关键字"></el-input>
         </li>
         <li>
-          <el-button type="primary">搜索</el-button>
+          <el-button type="primary" @click="searchBtn">搜索</el-button>
         </li>
       </ul>
       <div class="btns">
         <router-link :to="{name:'sendInfo'}">
           <el-button>发送营销短信</el-button>
         </router-link>
-        <el-button style="float:right">导出</el-button>
+        <el-button style="float:right" @click="exports">导出</el-button>
       </div>
       <div class="table">
         <el-table :data="tableData" style="width: 100%">
@@ -54,7 +54,7 @@
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small">查看</el-button>
-              <el-button v-show="scope.row.taskState==='待发送'" @click="handleNoClickNo(scope.$index, scope.row)" type="text" size="small">撤销</el-button>
+              <el-button v-show="scope.row.sendTimeType==='1'&&scope.row.taskState==='待发送'" @click="handleNoClickNo(scope.$index, scope.row)" type="text" size="small">撤销</el-button>
               <el-button v-show="scope.row.sendNo>0" @click="handleClickWork(scope.$index, scope.row)" type="text" size="small">日志</el-button>
               <el-button v-show="scope.row.taskState==='已撤销'" @click="handleNoClickDele(scope.$index, scope.row)" type="text" size="small">删除</el-button>
             </template>
@@ -156,8 +156,8 @@ export default {
         accountId: this.userInfo.userId,
         type: '0',
         status: this.value,
-        sendStartTime: this.value6[0] ? this.value6[0] : '',
-        sendEndTime: this.value6[1] ? this.value6[1] : ''
+        sendStartTime: this.value6 ? this.value6[0] : '',
+        sendEndTime: this.value6 ? this.value6[1] : ''
       }
     }
   },
@@ -171,22 +171,26 @@ export default {
         sendCont: val.sendCont,
         sendTime: val.sendTime,
         taskState: val.taskState,
-        sendTotal: val.sendTotal,
-        sedSucess: val.sendTotal - val.sendNo,
-        sedSucessPer: (val.sendTotal - val.sendNo) / val.sendTotal,
-        sendNo: val.sendNo
+        sendTotal: val.sendTotal || 0,
+        sedSucess: val.successNum || 0,
+        sedSucessPer: val.successNum / val.sendTotal || 0,
+        sendNo: val.sendNo || 0
       }
       // this.centerDialogVisible = true
       // this.centerDialogVisibleDel = true
     },
     // 当点击撤销的时候触发的事件
     handleNoClickNo (index, val) {
-      console.log(val)
       this.$ajax.post('/api/sms/cancelTaskByTaskId', {
         taskId: val.taskId
       }).then((data) => {
         let res = data.data
         if (res.code === '200') {
+          this.$message({
+            message: '已成功撤销',
+            type: 'success'
+          })
+          this.getList()
         } else {
           this.$message({
             message: data.data.message,
@@ -198,6 +202,39 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
+    // 当点击删除的时候进行删除
+    handleNoClickDele (index, val) {
+      console.log(val)
+      this.$ajax.post('/api/sms/deleteTaskByTaskId', {
+        taskId: val.taskId
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+          this.$message({
+            message: '已成功删除',
+            type: 'success'
+          })
+          this.getList()
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 当点击下载的时候进行一个下载
+    exports () {
+      console.log(1111)
+      let abc = window.open('/api/market/downloadNormalTasksByAccountId?accountId=' + this.userInfo.userId + '&sendStartTime=' + (this.value6 ? this.value6[0] : '') + '&sendEndTime=' + (this.value6 ? this.value6[1] : '') + '&status=' + this.value + '&type=0' + '&content=' + this.input + '&currPageNo=' + this.pageNo + '&limit=' + this.pageSize)
+      console.log(abc)
+    },
+    searchBtn () {
+      this.getList()
+    },
     setList (data) {
       let arr = []
       for (let word of data) {
@@ -205,12 +242,14 @@ export default {
           sendCont: word.content || '暂无数据',
           sendType: word.sendType === '0' && word.sendTimeType === '0' ? 'csv上传发送' : word.sendType === '0' && word.sendTimeType === '1' ? 'csv上传定时发送' : word.sendType === '1' && word.sendTimeType === '0' ? '单条发送' : '单条定时发送',
           creatTime: word.gmtCreate,
-          sendTime: word.gmtModify,
+          sendTime: word.sendTime || '暂无数据',
           taskState: word.status === '0' ? '待发送' : word.status === '1' ? '发送完成' : '已撤销',
           sendTotal: word.totalNum,
-          sendNo: word.numPerSms,
+          sendNo: word.failNum || 0,
           taskId: word.taskId,
-          sign: word.sign
+          sign: word.sign,
+          successNum: word.successNum,
+          sendTimeType: word.sendTimeType
         }
         arr.push(goods)
       }

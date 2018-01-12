@@ -15,7 +15,7 @@
           </el-option>
         </el-select>
         <span>活动时间</span>
-        <el-date-picker v-model="time" type="date" placeholder="选择日期" class="inp" format="yyyy-MM-dd" value-format='yyyy-MM-dd'>
+        <el-date-picker v-model="time" type="date" placeholder="选择日期" class="inp" format="yyyy-MM-dd" value-format='yyyyMMdd'>
         </el-date-picker>
         <span class="btn" @click="search">查询</span>
       </div>
@@ -38,7 +38,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pager">
+      <noCont v-if="searchArr.length===0"></noCont>
+      <div class="pager" v-if="searchArr.length!==0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
         </el-pagination>
       </div>
@@ -47,8 +48,12 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import noCont from '../../base/noCont/noCont'
 export default {
   name: 'search',
+  components: {
+    noCont
+  },
   data () {
     return {
       currentPage: 1,
@@ -84,6 +89,13 @@ export default {
         console.log('online')
       } else {
         console.log('offline')
+      }
+      if (this.phone === '') {
+        this.$message({
+          message: '请填写需要查询的手机号',
+          type: 'warning'
+        })
+        return false
       }
       this.$ajax.post('/api/homepage/getByPhoneTypeTime', {
         phone: this.phone,

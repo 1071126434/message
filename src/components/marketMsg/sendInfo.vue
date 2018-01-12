@@ -37,7 +37,7 @@
           <span>发送时间</span>
           <el-radio v-model="radio" label="0" @change="instant">即时发送</el-radio>
           <el-radio v-model="radio" label="1" @change="timing">定时发送</el-radio>
-          <el-date-picker style="margin-left:30px" v-model="value1" type="datetime" placeholder="选择日期时间" v-if="radioTime" format="yyyy-MM-dd" value-format='yyyy-MM-dd'>
+          <el-date-picker style="margin-left:30px" v-model="value1" type="datetime" placeholder="选择日期时间" v-if="radioTime" format="yyyy-MM-dd HH:mm:ss" value-format='yyyy-MM-dd HH:mm:ss'>
           </el-date-picker>
         </li>
         <li class="sendType" style="line-height: 40px">
@@ -251,16 +251,23 @@ export default {
     },
     // 当上传过csv文件的时候开始发送短信  批量发送
     csvSend () {
-      if (this.value === '' || this.textarea2 === '') {
+      if (this.uploadFileName === '') {
         this.$message({
-          message: '请正确填写内容,不能为空',
+          message: '请先操作上传csv文件',
           type: 'warning'
         })
         return false
       }
-      if (this.uploadFileName === '') {
+      if (this.realNum === 0) {
         this.$message({
-          message: '请先操作上传csv文件',
+          message: '没有可发送的手机号,请正确上传',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.value === '' || this.textarea2 === '') {
+        this.$message({
+          message: '请正确填写内容,不能为空',
           type: 'warning'
         })
         return false

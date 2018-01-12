@@ -72,13 +72,21 @@ export default {
       add: false,
       checked: false,
       checked1: false,
-      checked2: false
+      checked2: false,
+      isCanUpload: false
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
     ])
+  },
+  watch: {
+    isCanUpload (val) {
+      if (val) {
+        this.$refs.upload.submit()
+      }
+    }
   },
   methods: {
     uploadImg (img) {
@@ -238,8 +246,8 @@ export default {
           font-size 20px
           margin 20px 0
           img
-            width 60px
-            height 60px
+            width 57px
+            height 57px
         a
           font-size 12px
           color #99A9BF

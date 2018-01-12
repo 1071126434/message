@@ -4,36 +4,36 @@
       <h1>企业信息认证</h1>
       <p class="state">审核状态:
         <span v-if="this.userInfo.status===2">未认证</span>
-        <span v-else>已认证</span>
+        <span v-else>未通过</span>
       </p>
       <div class="line"></div>
       <ul>
         <li>
           <span>公司名称:</span>
-          <el-input v-model="companyName" placeholder="请输入与营业执照相同公司名" @input="isCont"></el-input>
+          <el-input v-model="companyName" placeholder="请输入与营业执照相同公司名" @input="isCont" disabled></el-input>
         </li>
         <li class="inputSelect">
           <span>公司地址:</span>
-          <el-select v-model="itemPro" placeholder="省份" @input="isCont" @change="provinceChange" value-key='code'>
+          <el-select v-model="itemPro" placeholder="省份" @input="isCont" @change="provinceChange" value-key='code' disabled>
             <el-option v-for="(itemPro,index) in provinces" :key="index" :label="itemPro.name" :value="itemPro"></el-option>
           </el-select>
-          <el-select v-model="itemCity" placeholder="市" @input="isCont" @change="cityChange" value-key='code'>
+          <el-select v-model="itemCity" placeholder="市" @input="isCont" @change="cityChange" value-key='code' disabled>
             <el-option v-for="(itemCity,index) in city" :key="index" :label="itemCity.name" :value="itemCity"></el-option>
           </el-select>
-          <el-select v-model="itemZone" placeholder="区" @input="isCont" value-key='code'>
+          <el-select v-model="itemZone" placeholder="区" @input="isCont" value-key='code' disabled>
             <el-option v-for="(itemZone,index) in zone" :key="index" :label="itemZone.name" :value="itemZone"></el-option>
           </el-select>
         </li>
         <li style="margin-left:72px;margin-top:-10px">
-          <el-input v-model="input" placeholder="请输入与营业执照相同地址" @input="isCont"></el-input>
+          <el-input v-model="input" placeholder="请输入与营业执照相同地址" @input="isCont" disabled></el-input>
         </li>
         <li>
           <span>注册号或信用代码:</span>
-          <el-input v-model="input2" placeholder="请输入内容" @input="isCont"></el-input>
+          <el-input v-model="input2" placeholder="请输入内容" @input="isCont" disabled></el-input>
         </li>
         <li>
           <span>法人姓名:</span>
-          <el-input v-model="input3" placeholder="请输入内容" @input="isCont"></el-input>
+          <el-input v-model="input3" placeholder="请输入内容" @input="isCont" disabled></el-input>
         </li>
         <li>
           <span>联系人姓名:</span>
@@ -49,7 +49,7 @@
         </li>
         <li style="text-align:left;margin-left:150px">
           <span style="margin-left:-65px">营业执照:</span>
-          <el-upload class="avatar-uploader" :show-file-list="false" :http-request="uploadImg" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" ref="upload" action="">
+          <el-upload disabled class="avatar-uploader" :show-file-list="false" :http-request="uploadImg" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" ref="upload" action="">
             <img v-if="imageUrl" :src="imageUrl" class="avatar" width="182px" height="182px">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
@@ -57,8 +57,8 @@
             <i class="el-icon-zoom-in"></i>放大图片</p>
         </li>
         <li style="text-align:center;margin-top:20px">
-          <el-button type="info" disabled v-show="status">提交审核</el-button>
-          <el-button type="primary" v-show="status_1" style="margin-left:-1px" @click="submit">提交审核</el-button>
+          <!-- <el-button type="info" disabled v-show="status">提交审核</el-button> -->
+          <el-button type="primary" style="margin-left:-1px" @click="submit">提交审核</el-button>
           <p class="wordText">注意:提交审核后,系统将会在一个工作日内完成审核</p>
         </li>
       </ul>
@@ -96,6 +96,7 @@ export default {
       zone: [],
       itemZone: null,
       isCanUpload: false,
+      getObj: {},
       showLookImg: false,
       lookImgUrl: ''
     }
@@ -106,7 +107,7 @@ export default {
     ])
   },
   created () {
-    this.Provinces()
+    this.getSubmit()
   },
   watch: {
     isCanUpload (val) {
@@ -167,6 +168,35 @@ export default {
           this.isCanUpload = true
         })
       }
+    },
+    // 当认证被驳回的时候,获取到能够修改的数据进行一个展示
+    getSubmit () {
+      this.$ajax.post('/api/companyCertify/getCompanyInfo', {
+        accountId: this.userInfo.userId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data.data
+        if (data.data.code === '200') {
+          this.companyName = res.companyName
+          this.itemPro = res.proviceDetail
+          this.itemCity = res.cityDetail
+          this.itemZone = res.areaDetail
+          this.input = res.addressDetail
+          this.input2 = res.companyCreditCode
+          this.input3 = res.legalPersonName
+          this.input4 = res.concatName
+          this.input5 = res.concatPhone
+          this.input6 = res.concatEmail
+          this.imageUrl = res.businessLicenceUrl
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
     },
     submit () {
       this.$ajax.post('/api/companyCertify/submit', {
