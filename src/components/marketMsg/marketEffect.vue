@@ -57,17 +57,17 @@
           </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='发送完成'">查看</el-button>
-              <el-button @click="handleClickNo(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='待发送'">撤销</el-button>
-              <el-button @click="handleClickdele(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='已撤销'">删除</el-button>
-              <el-button v-show="scope.row.sendNo>0" @click="handleClickWork(scope.$index, scope.row)" type="text" size="small">日志</el-button>
+              <el-button style="color:#40B6FF" @click="handleClick(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='发送完成'">查看</el-button>
+              <el-button style="color:#40B6FF" @click="handleClickNo(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='待发送'">撤销</el-button>
+              <el-button style="color:#40B6FF" @click="handleClickdele(scope.$index, scope.row)" type="text" size="small" v-show="scope.row.taskState==='已撤销'">删除</el-button>
+              <el-button style="color:#99A9BF" v-show="scope.row.sendNo>0" @click="handleClickWork(scope.$index, scope.row)" type="text" size="small">日志</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <noCont v-show="this.tableData.length===0"></noCont>
       <div class="pager" v-show="this.tableData.length!==0">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 15, 20,25]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
@@ -88,7 +88,7 @@ export default {
       value6: '',
       input: '',
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 10,
       dialogVisible: false,
       centerDialogVisible: false,
       centerDialogVisibleDel: false,

@@ -35,7 +35,7 @@
       </div>
       <noCont v-show="this.modelArr.length===0"></noCont>
       <div class="pager" v-show="this.modelArr.length!==0">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 15, 20,25]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
@@ -54,14 +54,10 @@ export default {
   data () {
     return {
       currentPage: 1,
-      modelArr: [{
-        signName: '注册验证码',
-        signType: '验证码',
-        status: '已通过'
-      }],
+      modelArr: [],
       apiUrl: '/api/homepage/getSignList',
       pageTotal: 0,
-      pageSize5: 5
+      pageSize5: 10
     }
   },
   computed: {

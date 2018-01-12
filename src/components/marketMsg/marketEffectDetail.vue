@@ -2,7 +2,7 @@
   <div class="marketEffectDetail">
     <div class="sendTop">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'marketEffectDetail' }">效果追踪短信</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'marketEffect' }">效果追踪短信</el-breadcrumb-item>
         <el-breadcrumb-item>查看详情</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
