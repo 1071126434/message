@@ -47,14 +47,9 @@
           </el-table-column>
         </el-table>
       </div>
-<<<<<<< HEAD
       <noCont v-if="searchArr.length===0"></noCont>
-      <div class="pager" v-if="searchArr.length!==0">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
-=======
       <div class="pager">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
->>>>>>> 8c26972aebb7b73f7b849548be31102a32c5c9b0
         </el-pagination>
       </div>
     </div>
@@ -62,19 +57,15 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
-<<<<<<< HEAD
 import noCont from '../../base/noCont/noCont'
+
+import { pageCommon } from '../../assets/js/mixin'
 export default {
   name: 'search',
   components: {
     noCont
   },
-=======
-import { pageCommon } from '../../assets/js/mixin'
-export default {
-  name: 'search',
   mixins: [pageCommon],
->>>>>>> 8c26972aebb7b73f7b849548be31102a32c5c9b0
   data () {
     return {
       phone: '',
@@ -85,36 +76,8 @@ export default {
     }
   },
   computed: {
-<<<<<<< HEAD
-    ...mapGetters([
-      'userInfo'
-    ])
-  },
-  methods: {
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
-    },
-    search () {
-      if (navigator.onLine) {
-        console.log('online')
-      } else {
-        console.log('offline')
-      }
-      if (this.phone === '') {
-        this.$message({
-          message: '请填写需要查询的手机号',
-          type: 'warning'
-        })
-        return false
-      }
-      this.$ajax.post('/api/homepage/getByPhoneTypeTime', {
-=======
     params () {
       return {
->>>>>>> 8c26972aebb7b73f7b849548be31102a32c5c9b0
         phone: this.phone,
         pageNo: this.pageNo,
         pageSize: this.pageSize,
