@@ -1,6 +1,3 @@
-
-
-
 <template>
   <div class="index" ref="index">
     <ul class="top">
@@ -112,6 +109,12 @@
         <el-select v-model="msgType" placeholder="请选择" style="margin-right:48px;margin-left:20px;width:150px;">
           <el-option label="全部" value="">
           </el-option>
+          <el-option label="通知" value="1">
+          </el-option>
+          <el-option label="验证码" value="2">
+          </el-option>
+          <el-option label="推广" value="3">
+          </el-option>
         </el-select>
         <span>发送时间 </span>
         <el-date-picker v-model="acTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" style="margin-right:48px;margin-left:20px;width:300px;">
@@ -220,13 +223,13 @@
       <el-dialog title="修改余额提醒值" :visible.sync="showLeftMoney" :modal-append-to-body="false" width="600px">
         <div class="list tips">
           <span>余额提醒值</span>
-          <el-input v-model="lestMoneyTip" style="width:300px;" placeholder="请输入内容"></el-input>
+          <el-input v-model="lestMoneyTip" type="number" style="width:300px;" placeholder="请输入内容"></el-input>
           <span>元</span>
           <p>当账户余额低于提醒值时，您会收到提醒短信。</p>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="showModel = false">取 消</el-button>
-          <el-button type="primary" @click="showModel = false">确 定</el-button>
+          <el-button @click="showLeftMoney = false">取 消</el-button>
+          <el-button type="primary" @click="sureToAlertNum">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -282,6 +285,7 @@ export default {
       monthOrder: '',
       msgType: '',
       acTime: '',
+      moneyObj: {},
       // 余额提醒值
       lestMoneyTip: '',
       currentPage1: 1,
@@ -466,7 +470,6 @@ export default {
   },
   methods: {
     initCharts () {
-      console.log(1)
       this.$refs.msg1.style.height = '120px'
       this.$refs.msg2.style.height = '120px'
       this.$refs.sendChart.style.height = '470px'
@@ -477,20 +480,80 @@ export default {
       msg2.setOption(this.msgOption2)
       sendChart.setOption(this.sendOption)
     },
+    // 获取顶部信息
+    getInfo () {
+      this.$ajax.post('/api/homepage/getAccountCurrentInfo', {
+        userId: this.userInfo.userId,
+        month: '201801'
+      }).then(data => {
+        if (data.data.code === '200') {
+          console.log(data)
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 修改预警值
+    sureToAlertNum () {
+      if (this.lestMoneyTip) {
+        this.$ajax.post('/api/homepage/setAlarmMoney', {
+          userId: this.userInfo.userId,
+          amount: this.lestMoneyTip
+        }).then(data => {
+          if (data.data.code === '200') {
+            this.$message({
+              message: '设置成功!',
+              type: 'success'
+            })
+            this.showLeftMoney = false
+          } else {
+            this.$message({
+              message: data.data.message,
+              type: 'warning'
+            })
+          }
+        }).catch(() => {
+          this.$message.error('服务器错误！')
+        })
+      }
+    },
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
+    },
+    // 获取钱的数额的情况
+    moneyNum () {
+      this.$ajax.post('/api/user/getUserSMSFundInfo', {
+        telephone: this.userInfo.telephone
+      }).then(data => {
+        if (data.data.code === '200') {
+          this.moneyObj = data.data.data
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
     }
   },
   mounted () {
     this.initCharts()
+    // this.moneyNum()
+    this.getInfo()
   }
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-
 .index
   padding 16px
   position relative

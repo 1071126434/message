@@ -13,36 +13,42 @@
         <el-table :data="modelArr">
           <el-table-column prop="code" label="模板CODE" align="center">
           </el-table-column>
-          <el-table-column prop="modelName" label="模板名称" align="center">
+          <el-table-column prop="name" label="模板名称" align="center">
           </el-table-column>
-          <el-table-column prop="modelType" label="模板类型" align="center">
-          </el-table-column>
-          <el-table-column prop="modelCont" label="模板内容" align="center">
+          <el-table-column prop="type" label="模板类型" align="center">
             <template slot-scope="scope">
-              <el-tooltip class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.modelCont" placement="bottom">
-                <span class="tooltipOverflow">{{ scope.row.modelCont }}</span>
+              <span>{{ scope.row.type==1 ? '短信通知' : scope.row.type==2 ? '验证码' : scope.row.type==3 ? '推广短信' : '其他' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="content" label="模板内容" align="center">
+            <template slot-scope="scope">
+              <el-tooltip class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.content" placement="bottom">
+                <span class="tooltipOverflow">{{ scope.row.content }}</span>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" align="center" v-if="1">
-          </el-table-column>
-          <el-table-column prop="status" label="状态" align="center" v-if="0">
+          <el-table-column prop="status" label="状态" align="center">
             <template slot-scope="scope">
-              <el-tooltip class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.status" placement="bottom">
-                <span class="tooltipOverflow">不通过∨</span>
+              <span v-if="scope.row.status==0">审核中</span>
+              <span v-if="scope.row.status==1">审核通过</span>
+              <el-tooltip v-if="scope.row.status==2" class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.errorInfo" placement="bottom">
+                <span class="tooltipOverflow">不通过
+                  <i class="el-icon-arrow-down"></i>
+                </span>
               </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="操作" align="center">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #36A5FF">修改</el-button>
-              <el-button type="text" size="small" style="color: #93A2BA">删除</el-button>
+              <span v-if="scope.row.status==0">-</span>
+              <el-button v-if="scope.row.status==2" @click="handleClick(scope.row)" type="text" size="small" style="color: #36A5FF">修改</el-button>
+              <el-button v-if="scope.row.status==1 || scope.row.status==2" @click="dele(scope.row)" type="text" size="small" style="color: #93A2BA">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div class="pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
@@ -50,21 +56,25 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import { pageCommon } from '../../assets/js/mixin'
 export default {
   name: 'modelManger',
+  mixins: [pageCommon],
   data () {
     return {
       currentPage: 1,
-      modelArr: [{
-        code: 'SMS_123456789',
-        modelName: '注册验证码',
-        modelType: '验证码',
-        modelCont: '显示八个字八个字',
-        status: '已通过'
-      }]
+      apiUrl: '/api/homepage/getTemplateList',
+      modelArr: []
     }
   },
   computed: {
+    params () {
+      return {
+        userId: this.userInfo.userId,
+        pageNo: this.pageNo,
+        pageSize: this.pageSize
+      }
+    },
     ...mapGetters([
       'userInfo'
     ])
@@ -72,32 +82,45 @@ export default {
   methods: {
     handleClick (row) {
       console.log(row)
+      sessionStorage.setItem('_fixModelInfo_', JSON.stringify(row))
+      this.$router.push({ name: 'addModel', query: { fix: 1 } })
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+    setList (data) {
+      this.modelArr = data
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
-    }
-  },
-  mounted () {
-    this.$ajax.post('/api/homepage/getTemplateList', {
-      userId: this.userInfo.account,
-      pageNo: this.pageNo,
-      pageSize: this.pageSize
-    }).then((data) => {
-      let res = data.data
-      if (res.code === '200') {
-        console.log(data)
-      } else {
-        this.$message({
-          message: res.message,
-          type: 'warning'
+    // 删除模板
+    dele (row) {
+      this.$confirm('此操作将永久删除该模板, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$ajax.post('/api/template/deleteTemplate', {
+          code: row.code
+        }).then((data) => {
+          let res = data.data
+          if (res.code === '200') {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getList()
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'warning'
+            })
+          }
+        }).catch((error) => {
+          this.$message.error(error)
         })
-      }
-    }).catch((error) => {
-      this.$message.error(error)
-    })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    }
   }
 }
 </script>

@@ -17,30 +17,44 @@
         <span>活动时间</span>
         <el-date-picker v-model="time" type="date" placeholder="选择日期" class="inp" format="yyyy-MM-dd" value-format='yyyyMMdd'>
         </el-date-picker>
-        <span class="btn" @click="search">查询</span>
+        <span class="btn" @click="getList">查询</span>
       </div>
       <div class="tables">
         <el-table :data="searchArr" style="width: 100%">
-          <el-table-column prop="phone" label="接收号码" align="center">
+          <el-table-column prop="telephone" label="接收号码" align="center">
           </el-table-column>
           <el-table-column prop="type" label="短信类型" align="center">
-          </el-table-column>
-          <el-table-column prop="cont" label="内容" align="center">
             <template slot-scope="scope">
-              <el-tooltip class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.cont" placement="bottom">
-                <span class="tooltipOverflow">{{ scope.row.cont }}</span>
+              <span>{{ scope.row.type==1 ? '通知短信' : scope.row.type==2 ? '验证码短信' : scope.row.type==3 ? '推广短信' : '其他' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="content" label="内容" align="center">
+            <template slot-scope="scope">
+              <el-tooltip class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.content" placement="bottom">
+                <span class="tooltipOverflow">{{ scope.row.content }}</span>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="date" label="日期" align="center">
+          <el-table-column prop="receiveTime" label="日期" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.receiveTime || scope.row.responseTime }}</span>
+            </template>
           </el-table-column>
           <el-table-column prop="status" label="状态" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.status == 1 ? '成功' : '失败' }}</span>
+            </template>
           </el-table-column>
         </el-table>
       </div>
+<<<<<<< HEAD
       <noCont v-if="searchArr.length===0"></noCont>
       <div class="pager" v-if="searchArr.length!==0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+=======
+      <div class="pager">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
+>>>>>>> 8c26972aebb7b73f7b849548be31102a32c5c9b0
         </el-pagination>
       </div>
     </div>
@@ -48,31 +62,30 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+<<<<<<< HEAD
 import noCont from '../../base/noCont/noCont'
 export default {
   name: 'search',
   components: {
     noCont
   },
+=======
+import { pageCommon } from '../../assets/js/mixin'
+export default {
+  name: 'search',
+  mixins: [pageCommon],
+>>>>>>> 8c26972aebb7b73f7b849548be31102a32c5c9b0
   data () {
     return {
-      currentPage: 1,
       phone: '',
-      msgType: '1',
-      pageSize: 5,
-      pageNo: 1,
-      totalCount: 0,
+      msgType: '2',
       time: '',
-      searchArr: [{
-        phone: '186671899665',
-        type: '通知',
-        cont: '杰斯积分算法发师傅i撒谎发u斯哈随风',
-        date: '2017-9-5',
-        status: '成功'
-      }]
+      searchArr: [],
+      apiUrl: '/api/homepage/getByPhoneTypeTime'
     }
   },
   computed: {
+<<<<<<< HEAD
     ...mapGetters([
       'userInfo'
     ])
@@ -98,45 +111,26 @@ export default {
         return false
       }
       this.$ajax.post('/api/homepage/getByPhoneTypeTime', {
+=======
+    params () {
+      return {
+>>>>>>> 8c26972aebb7b73f7b849548be31102a32c5c9b0
         phone: this.phone,
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         type: this.msgType,
         userId: this.userInfo.userId,
         time: this.time
-      }).then((data) => {
-        let res = data.data
-        this.totalCount = res.data.totalCount
-        if (res.code === '200') {
-          let arr = []
-          // if (res.data) {
-          for (let word of res.data.withdrawApplys) {
-            let goods = {
-              phone: word.userTelephone,
-              moneyNum: word.actualAmount,
-              bankNum: word.bankCardNo,
-              bank: word.bankName,
-              name: word.userName,
-              time: word.gmtCreate,
-              withdrawApplyId: word.withdrawApplyId,
-              state: word.isExport === '0' ? '未导出' : '已导出',
-              state1: word.isStoped,
-              comment: word.comment,
-              moneyType: word.withdrawType === '0' ? '本金提现' : '提前支取'
-            }
-            arr.push(goods)
-          }
-          // }
-          this.tableDataBuy = arr
-        } else {
-          this.$message({
-            message: res.message,
-            type: 'warning'
-          })
-        }
-      }).catch(() => {
-        this.$message.error('网络错误，刷新下试试')
-      })
+      }
+    },
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
+  methods: {
+    setList (data) {
+      console.log(data)
+      this.searchArr = data
     }
   }
 }

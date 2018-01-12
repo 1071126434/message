@@ -162,7 +162,6 @@ export default {
       width 60px
     span
       font-size 20px
-      margin-left 12px
       font-weight bold
       vertical-align middle
       color #ffffff

@@ -4,7 +4,7 @@
     <div class="cont">
       <div class="inputs">
         <span>月账单查询</span>
-        <el-date-picker v-model="time" type="date" placeholder="选择日期" class="inp">
+        <el-date-picker v-model="month" @change="getList" type="month" value-format="yyyy-MM" placeholder="选择日期" class="inp">
         </el-date-picker>
         <!-- <span class="btn">查询</span> -->
         <span class="download btn-b">下载账单</span>
@@ -21,54 +21,103 @@
         <el-table :data="searchArr" style="width: 100%">
           <el-table-column prop="time" label="消费时间" align="center">
           </el-table-column>
-          <el-table-column prop="payType" label="计费类型" align="center">
-          </el-table-column>
-          <el-table-column prop="orderType" label="订单类型" align="center">
-          </el-table-column>
-          <el-table-column prop="countMoney" label="消费金额" align="center">
-          </el-table-column>
-          <el-table-column prop="orderStatus" label="订单状态" align="center">
+          <el-table-column prop="feetype" label="计费类型" align="center">
             <template slot-scope="scope">
-              <span class="tipSuccess">已扣费</span>
+              <span>{{ scope.row.feetype==1 ? '通知短信' : scope.row.feetype==2 ? '验证码短信' : scope.row.feetype==3 ? '推广短信' : '其他' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="countNum" label="累计用量（条）" align="center">
+          <el-table-column prop="orderType" label="订单类型" align="center">
+            <template slot-scope="scope">
+              <span>消费</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="fee" label="消费金额" align="center">
+          </el-table-column>
+          <el-table-column prop="status" label="订单状态" align="center">
+            <template slot-scope="scope">
+              <span v-if="scope.row.status==0" class="tipError">未扣费</span>
+              <span v-if="scope.row.status==1" class="tipSuccess">已扣费</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="count" label="累计用量（条）" align="center">
           </el-table-column>
         </el-table>
       </div>
       <div class="pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
+import { pageCommon } from '../../assets/js/mixin'
 export default {
   name: 'orders',
+  mixins: [pageCommon],
   data () {
     return {
       currentPage: 1,
       phone: '',
       msgType: '',
-      time: '',
-      searchArr: [{
-        time: '2017-9-5',
-        payType: '扣费',
-        orderType: '消费',
-        countMoney: '100.59',
-        orderStatus: '已扣费',
-        countNum: '5'
-      }]
+      month: '',
+      apiUrl: '/api/homepage/getMonthBillByMonth',
+      searchArr: [],
+      feeNumObj: {}
     }
   },
-  methods: {
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+  computed: {
+    params () {
+      return {
+        userId: this.userInfo.userId,
+        month: this.month,
+        pageNo: this.pageNo,
+        pageSize: this.pageSize
+      }
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
+  methods: {
+    // 初始化时间
+    initTime () {
+      let time = new Date()
+      let year = time.getFullYear()
+      let month = time.getMonth() + 1
+      if (month < 10) {
+        month = '0' + month
+      }
+      this.month = year + '-' + month
+      this.getList()
+    },
+    getFeeNum () {
+      this.$ajax.post('/api/homepage/getCountMonthByMonth', {
+        month: this.month,
+        userId: this.userInfo.userId
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+          this.feeNumObj = res.data
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'warning'
+          })
+        }
+      }).catch((error) => {
+        this.$message.error(error)
+      })
+    },
+    // 获取月账单
+    setList (data) {
+      this.searchArr = data
     }
+  },
+  mounted () {
+    this.initTime()
+    this.getFeeNum()
   }
 }
 </script>
