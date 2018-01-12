@@ -15,24 +15,26 @@
           </el-table-column>
           <el-table-column prop="signType" label="签名类型" align="center">
           </el-table-column>
-          <el-table-column prop="status" label="状态" align="center" v-if="1">
-          </el-table-column>
-          <el-table-column prop="status" label="状态" align="center" v-if="0">
+          <el-table-column prop="status" label="状态" align="center">
             <template slot-scope="scope">
-              <el-tooltip class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.status" placement="bottom">
-                <span class="tooltipOverflow">不通过∨</span>
+              <span v-if="scope.row.status===0">待审核</span>
+              <span v-if="scope.row.status===1">审核通过</span>
+              <el-tooltip v-if="scope.row.status===2" class="item" popper-class="tooltipItem" effect="dark" :content="scope.row.remarks" placement="bottom">
+                <span class="tooltipOverflow">不通过</span>
               </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="操作" align="center">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #36A5FF">修改</el-button>
-              <el-button type="text" size="small" style="color: #93A2BA" @click="detel(scope.row)">删除</el-button>
+              <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #36A5FF" v-show="scope.row.status===2">修改</el-button>
+              <el-button type="text" size="small" style="color: #93A2BA" @click="detel(scope.row)" v-show="scope.row.status===2||scope.row.status===1">删除</el-button>
+              <el-button type="text" size="small" style="color: #93A2BA" @click="detel(scope.row)" v-show="scope.row.status===0" disabled>--</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div class="pager">
+      <noCont v-show="this.modelArr.length===0"></noCont>
+      <div class="pager" v-show="this.modelArr.length!==0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
@@ -42,9 +44,13 @@
 <script type="text/ecmascript-6">
 import { pageCommon } from '../../assets/js/mixin'
 import { mapGetters } from 'vuex'
+import noCont from '../../base/noCont/noCont'
 export default {
   name: 'manger',
   mixins: [pageCommon],
+  components: {
+    noCont
+  },
   data () {
     return {
       currentPage: 1,
@@ -78,8 +84,9 @@ export default {
         let goods = {
           signName: word.sign || '暂无数据',
           signType: word.type === 3 ? '营销短信' : '系统短信' || '暂无数据',
-          status: word.status === 0 ? '待审核' : word.status === 1 ? '已通过' : '未通过' || '暂无数据',
-          id: word.id
+          status: word.status,
+          id: word.id,
+          remarks: word.remarks
         }
         arr.push(goods)
       }

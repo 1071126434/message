@@ -42,7 +42,7 @@
             <span>{{this.sellerInfo.click}}条</span>
           </li>
           <li>点击率:
-            <span>{{this.sellerInfo.clickLv}}%</span>
+            <span>{{this.sellerInfo.clickLv|reverse}}%</span>
           </li>
         </ul>
       </div>
@@ -68,13 +68,13 @@
       <div class="sucessNum" ref="sucessNum" v-show="pointTwo"></div>
       <p class="totalCount" v-show="pointOne">
         <span>
-          发送成功总数:55条</span>&nbsp;&nbsp;
-        <span>点击率:95%</span>
+          发送成功总数:{{this.sellerInfo.successNum}}条</span>&nbsp;&nbsp;
+        <span>点击率:{{this.sellerInfo.clickLv |reverse}}%</span>
       </p>
       <p class="totalCount" v-show="pointTwo">
         <span>
-          发送成功总数:55条</span>&nbsp;&nbsp;
-        <span>成功率:95%</span>
+          发送成功总数:{{this.sellerInfo.successNum}}条</span>&nbsp;&nbsp;
+        <span>成功率:{{this.sellerInfo.successNumLv|reverse}}%</span>
       </p>
     </div>
     <!-- 列表展示部分 -->
@@ -102,7 +102,7 @@
             </el-select>
           </li>
           <li>
-            <el-button type="primary">搜索</el-button>
+            <el-button type="primary" @click="search">搜索</el-button>
             <i class="el-icon-download" @click="exports"></i>
           </li>
         </ul>
@@ -120,7 +120,8 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="page">
+        <noCont v-if="this.tableData.length===0"></noCont>
+        <div class="page" v-if="this.tableData.length!==0">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
           </el-pagination>
         </div>
@@ -133,9 +134,13 @@ import echart from 'echarts'
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 import { pageCommon } from '../../assets/js/mixin'
+import noCont from '../../base/noCont/noCont'
 export default {
   name: 'marketEffectDetail',
   mixins: [pageCommon],
+  components: {
+    noCont
+  },
   data () {
     Vue.filter('reverse', function (message) {
       if (message === 1) {
@@ -303,6 +308,11 @@ export default {
     }
   },
   created () {
+    this.setPiont.series[0].data[0].value = this.sellerInfo.click
+    this.setPiont.series[0].data[1].value = this.sellerInfo.successNum - this.sellerInfo.click
+    this.setSucess.series[0].data[0].value = this.sellerInfo.successNum
+    this.setSucess.series[0].data[1].value = this.sellerInfo.sendTotal - this.sellerInfo.successNum
+    // console.log()
     this.$ajax.post('/api/market/getViewCountByTaskId', {
       taskId: this.sellerInfo.taskId,
       pageSize: 144,
@@ -320,7 +330,7 @@ export default {
         this.sendOption.series[0].data = arr
         this.sendOption.xAxis.data = arr1
         this.initEchart()
-        console.log(this.sendOption.series[0].data, this.sendOption.xAxis.data)
+        // console.log(this.sendOption.series[0].data, this.sendOption.xAxis.data)
       } else {
         this.$message({
           message: data.data.message,
@@ -336,6 +346,9 @@ export default {
   methods: {
     exports () {
       window.open('/api/market/downloadTaskDetailByTaskId?taskId=' + this.sellerInfo.taskId + '&pageNo=' + this.pageNo + '&pageSize=' + this.pageSize + '&phoneNo=' + this.input + '&smsStatus' + this.value + '&whetherOpenUrl' + this.value1)
+    },
+    search () {
+      this.getList()
     },
     initEchart () {
       this.$refs.echarts.style.height = '300px'
@@ -371,9 +384,9 @@ export default {
         let goods = {
           sendCont: word.phoneNo || '暂无数据',
           sendType: word.smsStatus === '0' ? '待发送' : word.smsStatus === '1' ? '已发送' : word.sendType === '2' ? '发送成功' : '发送失败',
-          creatTime: word.sendTime,
+          creatTime: word.sendTime || '暂无数据',
           sendTime: word.whetherOpenUrl === 0 ? '是' : '否',
-          taskState: word.openUrlTime || ''
+          taskState: word.openUrlTime || '暂无数据'
         }
         arr.push(goods)
       }
@@ -382,7 +395,7 @@ export default {
   },
   mounted () {
     this.initEchart()
-    // this.initTwo()
+    this.initTwo()
   }
 }
 </script>

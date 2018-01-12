@@ -65,7 +65,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pager">
+      <noCont v-show="this.tableData.length===0"></noCont>
+      <div class="pager" v-show="this.tableData.length!==0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
@@ -75,9 +76,13 @@
 <script type="text/ecmascript-6">
 import { pageCommon } from '../../assets/js/mixin.js'
 import { mapGetters, mapActions } from 'vuex'
+import noCont from '../../base/noCont/noCont'
 export default {
   name: 'market',
   mixins: [pageCommon],
+  components: {
+    noCont
+  },
   data () {
     return {
       value6: '',
