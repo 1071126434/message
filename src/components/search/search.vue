@@ -19,7 +19,7 @@
         </el-date-picker>
         <span class="btn" @click="getList">查询</span>
       </div>
-      <div class="tables">
+      <div class="tables" v-if="searchArr.length!==0">
         <el-table :data="searchArr" style="width: 100%">
           <el-table-column prop="telephone" label="接收号码" align="center">
           </el-table-column>
@@ -48,7 +48,7 @@
         </el-table>
       </div>
       <noCont v-if="searchArr.length===0"></noCont>
-      <div class="pager">
+      <div class="pager" v-if="searchArr.length!==0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>

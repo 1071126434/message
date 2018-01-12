@@ -7,13 +7,13 @@
         </div>
         <div class="right">
           <p>账户余额(元)：
-            <strong>￥21.21</strong>
+            <strong>￥{{ topInfoObj.balance }}</strong>
             <b class="small-btn" @click="$router.push({name: 'recharge'})">充值</b>
           </p>
           <p>
             <span class="link" @click="$router.push({name: 'fee'})">收费标准</span>
             <span class="link" @click="$router.push({name: 'orders'})">查看账单</span>
-            <span class="link" @click="showLeftMoney=true">余额预警：￥20.00</span>
+            <span class="link" @click="showLeftMoney=true">余额预警：￥{{ topInfoObj.alarmValue }}</span>
           </p>
         </div>
       </li>
@@ -23,10 +23,10 @@
         </div>
         <div class="right">
           <p>今日发送成功数(条)：
-            <strong>2134</strong>
+            <strong>{{ topInfoObj.todaySendCount }}</strong>
           </p>
           <p>
-            <span>累计：￥590.00</span>
+            <span>累计：￥{{ topInfoObj.todayMoney }}</span>
           </p>
         </div>
       </li>
@@ -36,17 +36,17 @@
         </div>
         <div class="right">
           <p>本月发送成功数(条)：
-            <strong>2125462</strong>
+            <strong>{{ topInfoObj.sendCount }}</strong>
           </p>
           <p>
-            <span>累计：￥5290.00</span>
+            <span>累计：￥{{ topInfoObj.monthMoney }}</span>
           </p>
         </div>
       </li>
     </ul>
     <div class="sendDetail">
       <h2 class="title">短信发送情况
-        <el-date-picker class="datePick" style="width: 140px" v-model="sendDetaildMonth" type="month" placeholder="选择月">
+        <el-date-picker class="datePick" style="width: 140px" v-model="sendDetaildMonth" @change="getSendInfo" value-format="yyyyMM" type="month" placeholder="选择月">
         </el-date-picker>
       </h2>
       <div class="msgType">
@@ -62,17 +62,17 @@
               <p>
                 <i style="border-color: #40B6FF"></i>
                 <span>发送成功数：</span>
-                <b>12489条</b>
+                <b>{{ sendInfoObj.systemSuccessCount }}条</b>
               </p>
               <p>
                 <i style="border-color: #B8E3FE"></i>
                 <span>发送失败数：</span>
-                <b>12489条</b>
+                <b>{{ sendInfoObj.systemSendCount - sendInfoObj.systemSuccessCount }}条</b>
               </p>
               <p>
                 <i style="border-color: #B8E3FE #40B6FF #40B6FF #B8E3FE"></i>
                 <span>系统发送总条</span>
-                <b>12489条</b>
+                <b>{{ sendInfoObj.systemSendCount }}条</b>
               </p>
             </div>
           </div>
@@ -85,17 +85,17 @@
               <p>
                 <i style="border-color: #FF9F00"></i>
                 <span>发送成功数：</span>
-                <b>12489条</b>
+                <b>{{ sendInfoObj.marketSuccessCount }}条</b>
               </p>
               <p>
                 <i style="border-color: #FED590"></i>
                 <span>发送失败数：</span>
-                <b>12489条</b>
+                <b>{{ sendInfoObj.marketSendCount - sendInfoObj.marketSuccessCount }}条</b>
               </p>
               <p>
                 <i style="border-color: #FED590 #FF9F00 #FF9F00 #FED590"></i>
                 <span>系统发送总条</span>
-                <b>12489条</b>
+                <b>{{ sendInfoObj.marketSendCount }}条</b>
               </p>
             </div>
           </div>
@@ -107,19 +107,15 @@
       <div class="search">
         <span>短信类型 </span>
         <el-select v-model="msgType" placeholder="请选择" style="margin-right:48px;margin-left:20px;width:150px;">
-          <el-option label="全部" value="">
-          </el-option>
           <el-option label="通知" value="1">
           </el-option>
           <el-option label="验证码" value="2">
           </el-option>
-          <el-option label="推广" value="3">
-          </el-option>
         </el-select>
         <span>发送时间 </span>
-        <el-date-picker v-model="acTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" style="margin-right:48px;margin-left:20px;width:300px;">
+        <el-date-picker v-model="acTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyyMMdd" style="margin-right:48px;margin-left:20px;width:360px;">
         </el-date-picker>
-        <b class="btn">搜索</b>
+        <b class="btn" @click="getSendTrend">搜索</b>
         <el-button style="float:right">下载失败日志</el-button>
       </div>
       <div class="sendChart" ref="sendChart"></div>
@@ -130,7 +126,7 @@
           <i class="el-icon-circle-plus model" @click="$router.push({name: 'addModel'})"></i>
         </h2>
         <div>
-          <strong>2</strong>
+          <strong>{{ topInfoObj.templateCount }}</strong>
           <span>(可用)</span>
           <b class="small-btn" @click="$router.push({name: 'modelManger'})">查看</b>
         </div>
@@ -140,7 +136,7 @@
           <i class="el-icon-circle-plus sign" @click="$router.push({name: 'addSign'})"></i>
         </h2>
         <div>
-          <strong>2</strong>
+          <strong>{{ topInfoObj.signCount }}</strong>
           <span>(可用)</span>
           <b class="small-btn" @click="$router.push({name: 'manger'})">查看</b>
         </div>
@@ -153,7 +149,7 @@
         </div>
       </li>
     </ul>
-    <div class="orders">
+    <!-- <div class="orders">
       <h2 class="title">月账单</h2>
       <div class="search">
         <span>月账单查询</span>
@@ -188,7 +184,8 @@
           </el-pagination>
         </div>
       </div>
-    </div>
+    </div> -->
+    <orderBill style="margin:16px 0 0"></orderBill>
     <div class="alerts">
       <el-dialog title="短信模板列表" :visible.sync="showModel" :modal-append-to-body="false" width="600px">
         <div class="list">
@@ -277,15 +274,22 @@
 <script type="text/ecmascript-6">
 import echarts from 'echarts'
 import { mapGetters } from 'vuex'
+import OrderBill from '../orders/orders'
 export default {
   name: 'index',
+  components: {
+    OrderBill
+  },
   data () {
     return {
       sendDetaildMonth: '',
       monthOrder: '',
-      msgType: '',
+      msgType: '2',
       acTime: '',
-      moneyObj: {},
+      // 顶部信息对象
+      topInfoObj: {},
+      // 发送情况对象
+      sendInfoObj: {},
       // 余额提醒值
       lestMoneyTip: '',
       currentPage1: 1,
@@ -327,8 +331,8 @@ export default {
               }
             },
             data: [
-              { value: 12489, name: '发送成功数' },
-              { value: 1289, name: '发送失败数' }
+              { value: 0, name: '发送成功数' },
+              { value: 0, name: '发送失败数' }
             ]
           }
         ]
@@ -368,8 +372,8 @@ export default {
               }
             },
             data: [
-              { value: 12489, name: '发送成功数' },
-              { value: 1289, name: '发送失败数' }
+              { value: 0, name: '发送成功数' },
+              { value: 0, name: '发送失败数' }
             ]
           }
         ]
@@ -379,7 +383,7 @@ export default {
           trigger: 'axis'
         },
         legend: {
-          data: ['计划下单数', '实际下单数', '失败数量']
+          data: ['发送总数', '成功数量']
         },
         toolbox: {
           show: false,
@@ -406,7 +410,7 @@ export default {
         },
         series: [
           {
-            name: '计划下单数',
+            name: '发送总数',
             type: 'line',
             smooth: true,
             itemStyle: {
@@ -417,7 +421,7 @@ export default {
             data: [11, 11, 15, 13, 12, 13, 10]
           },
           {
-            name: '实际下单数',
+            name: '成功数量',
             type: 'line',
             smooth: true,
             itemStyle: {
@@ -426,17 +430,6 @@ export default {
               }
             },
             data: [1, 4, 2, 5, 3, 2, 9]
-          },
-          {
-            name: '失败数量',
-            smooth: true,
-            type: 'line',
-            itemStyle: {
-              normal: {
-                color: 'transparent'
-              }
-            },
-            data: [2, 5, 4, 6, 4, 3, 8]
           }
         ]
       },
@@ -464,6 +457,16 @@ export default {
     }
   },
   computed: {
+    initTime: function () {
+      let time = new Date()
+      let year = time.getFullYear()
+      let month = time.getMonth() - 0 + 1
+      if (month < 10) {
+        month = '0' + month
+      }
+      let postMonth = year + '' + month
+      return postMonth
+    },
     ...mapGetters([
       'userInfo'
     ])
@@ -484,10 +487,67 @@ export default {
     getInfo () {
       this.$ajax.post('/api/homepage/getAccountCurrentInfo', {
         userId: this.userInfo.userId,
-        month: '201801'
-      }).then(data => {
+        month: this.initTime
+      }).then((data) => {
         if (data.data.code === '200') {
-          console.log(data)
+          this.topInfoObj = data.data.data
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 获取发送情况
+    getSendInfo () {
+      this.$ajax.post('/api/homepage/getAccountCurrentInfo', {
+        userId: this.userInfo.userId,
+        month: this.sendDetaildMonth
+      }).then((data) => {
+        if (data.data.code === '200') {
+          let res = data.data.data
+          this.sendInfoObj = res
+          this.msgOption1.series[0].data[0].value = res.systemSuccessCount
+          this.msgOption1.series[0].data[1].value = res.systemSendCount - res.systemSuccessCount
+          this.msgOption2.series[0].data[0].value = res.marketSuccessCount
+          this.msgOption2.series[0].data[1].value = res.marketSendCount - res.marketSuccessCount
+          this.initCharts()
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 获取发送趋势数据
+    getSendTrend () {
+      this.$ajax.post('/api/homepage/getByTypeTime', {
+        userId: this.userInfo.userId,
+        startDay: this.acTime[0],
+        endDay: this.acTime[1],
+        type: this.msgType
+      }).then((data) => {
+        if (data.data.code === '200') {
+          let res = data.data.data
+          let xData = []
+          let aNum = []
+          let sNum = []
+          for (let i of res) {
+            xData.push(i.hour)
+            aNum.push(i.quireNum)
+            sNum.push(i.successNum)
+          }
+          this.sendOption.xAxis.data = xData
+          this.sendOption.series[0].data = aNum
+          this.sendOption.series[1].data = sNum
+          this.initCharts()
         } else {
           this.$message({
             message: data.data.message,
@@ -504,13 +564,14 @@ export default {
         this.$ajax.post('/api/homepage/setAlarmMoney', {
           userId: this.userInfo.userId,
           amount: this.lestMoneyTip
-        }).then(data => {
+        }).then((data) => {
           if (data.data.code === '200') {
             this.$message({
               message: '设置成功!',
               type: 'success'
             })
             this.showLeftMoney = false
+            this.getInfo()
           } else {
             this.$message({
               message: data.data.message,
@@ -527,29 +588,13 @@ export default {
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
-    },
-    // 获取钱的数额的情况
-    moneyNum () {
-      this.$ajax.post('/api/user/getUserSMSFundInfo', {
-        telephone: this.userInfo.telephone
-      }).then(data => {
-        if (data.data.code === '200') {
-          this.moneyObj = data.data.data
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch(() => {
-        this.$message.error('服务器错误！')
-      })
     }
   },
   mounted () {
-    this.initCharts()
-    // this.moneyNum()
+    this.sendDetaildMonth = this.initTime
     this.getInfo()
+    this.getSendInfo()
+    this.getSendTrend()
   }
 }
 </script>

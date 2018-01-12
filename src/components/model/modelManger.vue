@@ -9,7 +9,7 @@
       <div class="add">
         <span class="btn" @click="$router.push({name: 'addModel'})">添加模板</span>
       </div>
-      <div class="table">
+      <div class="table" v-if="modelArr.length!=0">
         <el-table :data="modelArr">
           <el-table-column prop="code" label="模板CODE" align="center">
           </el-table-column>
@@ -47,7 +47,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pager">
+      <noCont v-if="modelArr.length==0"></noCont>
+      <div class="pager" v-if="modelArr.length!=0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
@@ -57,9 +58,13 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import { pageCommon } from '../../assets/js/mixin'
+import NoCont from '../../base/noCont/noCont'
 export default {
   name: 'modelManger',
   mixins: [pageCommon],
+  components: {
+    NoCont
+  },
   data () {
     return {
       currentPage: 1,
