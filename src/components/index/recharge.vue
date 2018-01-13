@@ -11,7 +11,7 @@
         <ul class="list">
           <li>
             <span>余额：</span>
-            <strong>￥30.00</strong>
+            <strong>￥{{this.$route.query.moneyNum}}</strong>
           </li>
           <li>
             <span>充值金额：</span>
@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     coinPay () {
-      window.open('/api/alipay/recharge?amount=' + this.rechargeNum + '&type=' + 1 + '&accountId=' + this.userInfo.userId + '&callBack=http://10.0.0.34:8099/home/index')
+      window.open('/api/alipay/recharge?amount=' + this.rechargeNum + '&type=' + 1 + '&accountId=' + this.userInfo.userId + '&callBack=http://localhost:8099/home/index')
     }
   }
 }

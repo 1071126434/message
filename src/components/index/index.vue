@@ -8,7 +8,7 @@
         <div class="right">
           <p>账户余额(元)：
             <strong>￥{{ topInfoObj.balance }}</strong>
-            <b class="small-btn" @click="$router.push({name: 'recharge'})">充值</b>
+            <b class="small-btn" @click="$router.push({name: 'recharge',query:{moneyNum: topInfoObj.balance}})">充值</b>
           </p>
           <p>
             <span class="link" @click="$router.push({name: 'fee'})">收费标准</span>
