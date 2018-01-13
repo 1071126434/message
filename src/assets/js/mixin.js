@@ -35,12 +35,14 @@ export const pageCommon = {
     },
     // 查看数据api
     getList () {
+      this.task = true
       // this.loadingList = true
       this.$ajax.post(this.apiUrl, this.params).then((response) => {
         // this.loadingList = false
         console.log(response)
         let mydata = response.data
         if (mydata.code === '200') {
+          this.task = false
           this.pageTotal = mydata.data.total || mydata.totalCount || mydata.data.totalCount
           let myDatas = mydata.data.waitingSendSMSList || mydata.data.data || mydata.data.datas || mydata.data.userAccountDOList || mydata.data.buyers || mydata.data || mydata.data.chargeApplys
           this.setList(myDatas)

@@ -47,6 +47,7 @@
           </el-table-column>
         </el-table>
       </div>
+      <lottie v-show="task"></lottie>
       <noCont v-if="modelArr.length==0"></noCont>
       <div class="pager" v-if="modelArr.length!=0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
@@ -59,14 +60,17 @@
 import { mapGetters } from 'vuex'
 import { pageCommon } from '../../assets/js/mixin'
 import NoCont from '../../base/noCont/noCont'
+import lottie from '../../base/lottie/index'
 export default {
   name: 'modelManger',
   mixins: [pageCommon],
   components: {
-    NoCont
+    NoCont,
+    lottie
   },
   data () {
     return {
+      task: false,
       currentPage: 1,
       apiUrl: '/api/homepage/getTemplateList',
       modelArr: []

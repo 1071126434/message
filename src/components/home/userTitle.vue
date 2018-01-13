@@ -66,6 +66,7 @@ export default {
     return {
       showPass: false,
       showInfo: false,
+      task: false,
       fixPassObj: {
         oldpass: '',
         newpass1: '',

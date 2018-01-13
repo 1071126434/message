@@ -35,6 +35,7 @@
           <strong>{{ feeNumObj.totalDiscounts ? feeNumObj.totalDiscounts : 0 }}</strong>元(预计在月终返还)
         </span>
       </div>
+      <lottie v-show="task"></lottie>
       <noCont v-if="searchArr.length==0"></noCont>
       <div class="tables" v-if="searchArr.length!=0 && activeIndex==1">
         <el-table :data="searchArr" style="width: 100%">
@@ -98,11 +99,13 @@
 import { mapGetters } from 'vuex'
 import { pageCommon } from '../../assets/js/mixin'
 import NoCont from '../../base/noCont/noCont'
+import lottie from '../../base/lottie/index'
 export default {
   name: 'orders',
   mixins: [pageCommon],
   components: {
-    NoCont
+    NoCont,
+    lottie
   },
   data () {
     return {
@@ -111,6 +114,7 @@ export default {
       phone: '',
       msgType: '',
       month: '',
+      task: false,
       // apiUrl: '/api/homepage/getMonthBillByMonth',
       searchArr: [],
       feeNumObj: {}

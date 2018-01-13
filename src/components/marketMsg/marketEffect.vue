@@ -65,6 +65,7 @@
           </el-table-column>
         </el-table>
       </div>
+      <lottie v-show="task"></lottie>
       <noCont v-show="this.tableData.length===0"></noCont>
       <div class="pager" v-show="this.tableData.length!==0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 15, 20,25]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
@@ -77,11 +78,13 @@
 import { pageCommon } from '../../assets/js/mixin.js'
 import { mapGetters, mapActions } from 'vuex'
 import noCont from '../../base/noCont/noCont'
+import lottie from '../../base/lottie/index'
 export default {
   name: 'market',
   mixins: [pageCommon],
   components: {
-    noCont
+    noCont,
+    lottie
   },
   data () {
     return {
@@ -92,6 +95,7 @@ export default {
       dialogVisible: false,
       centerDialogVisible: false,
       centerDialogVisibleDel: false,
+      task: false,
       options: [{
         value: '0',
         label: '待发送'
