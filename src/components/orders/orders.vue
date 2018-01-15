@@ -213,6 +213,7 @@ export default {
   mounted () {
     this.initTime()
     this.getFeeNum()
+    this.getList()
     // this.getMarketList()
   }
 }
