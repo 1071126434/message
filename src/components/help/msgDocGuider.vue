@@ -21,7 +21,7 @@
           <el-step>
             <span slot="title" class="stepCont">
               创建短信签名
-              <strong>
+              <strong @click="$router.push({name: 'addSign'})">
                 <i class="el-icon-circle-plus"></i>
                 添加签名
               </strong>
@@ -47,8 +47,8 @@
     <div class="alert">
       <el-dialog title="获取account/accessKey" :visible.sync="showKey" :modal-append-to-body="false" width="600px">
         <div class="list">
-          <span>accessKey：10212155541412525</span>
-          <b class="small-btn copy" data-clipboard-text="123456" @click="doCopy">复制</b>
+          <span>account: {{ userInfo.userId }}</span>
+          <b class="small-btn copy" :data-clipboard-text="userInfo.userId" @click="doCopy">复制</b>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="showKey = false">取 消</el-button>
@@ -60,12 +60,18 @@
 </template>
 <script type="text/ecmascript-6">
 import Clipboard from 'clipboard'
+import { mapGetters } from 'vuex'
 export default {
   name: 'msgDocGuider',
   data () {
     return {
       showKey: false
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   methods: {
     doCopy () {

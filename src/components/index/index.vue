@@ -149,42 +149,6 @@
         </div>
       </li>
     </ul>
-    <!-- <div class="orders">
-      <h2 class="title">月账单</h2>
-      <div class="search">
-        <span>月账单查询</span>
-        <el-date-picker v-model="monthOrder" type="month" placeholder="选择月">
-        </el-date-picker>
-        <el-button style="float:right">下载账单</el-button>
-      </div>
-      <div class="cont">
-        <h3>当月短信：
-          <span>68</span>&nbsp;&nbsp;条&nbsp;&nbsp;&nbsp;&nbsp;当前费用：
-          <span>2.17</span>&nbsp;&nbsp;元
-        </h3>
-        <el-table :data="orderArr" style="width: 100%;border:1px solid #C0CCDA">
-          <el-table-column prop="time" label="消费时间" align="center">
-          </el-table-column>
-          <el-table-column prop="countType" label="计费类型" align="center">
-          </el-table-column>
-          <el-table-column prop="orderType" label="订单类型" align="center">
-          </el-table-column>
-          <el-table-column prop="countMoney" label="消费" align="center">
-          </el-table-column>
-          <el-table-column prop="orderStatus" label="订单状态" align="center">
-            <template slot-scope="scope">
-              <span class="tipSuccess">{{ scope.row.orderStatus }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="countNum" label="累计用量 (条)" align="center">
-          </el-table-column>
-        </el-table>
-        <div class="pager">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage1" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
-          </el-pagination>
-        </div>
-      </div>
-    </div> -->
     <orderBill style="margin:16px 0 0"></orderBill>
     <div class="alerts">
       <el-dialog title="短信模板列表" :visible.sync="showModel" :modal-append-to-body="false" width="600px">
@@ -592,6 +556,13 @@ export default {
     // 下载失败日志
     downFailLog () {
       window.open('/api/homepage/downloadFail')
+      // this.$ajax.get('/api/account/getMessagePrice', {
+      // }).then((data) => {
+      //   if (data.data.code === '200') {
+      //   }
+      // }).catch(() => {
+      //   this.$message.error('服务器错误！')
+      // })
     },
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
