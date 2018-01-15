@@ -40,19 +40,19 @@
       <el-dialog title="修改登录密码" :visible.sync="showPass" :modal-append-to-body="false" width="600px">
         <div class="list">
           <span>输入原密码</span>
-          <el-input v-model="fixPassObj.oldpass" style="width:300px;" placeholder="请输入内容"></el-input>
+          <el-input v-model="fixPassObj.oldpass" type="password" style="width:300px;" placeholder="请输入内容"></el-input>
         </div>
         <div class="list">
           <span>输入新密码</span>
-          <el-input v-model="fixPassObj.newpass1" style="width:300px;" placeholder="请输入内容"></el-input>
+          <el-input v-model="fixPassObj.newpass1" type="password" style="width:300px;" placeholder="请输入内容"></el-input>
         </div>
         <div class="list">
           <span>重新输入新密码</span>
-          <el-input v-model="fixPassObj.newpass2" style="width:300px;" placeholder="请输入内容"></el-input>
+          <el-input v-model="fixPassObj.newpass2" type="password" style="width:300px;" placeholder="请输入内容"></el-input>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="showPass = false">取 消</el-button>
-          <el-button type="primary" @click="showPass = false">确 定</el-button>
+          <el-button type="primary" @click="fixPass">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -60,6 +60,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import md5 from 'md5'
 export default {
   name: 'userTitle',
   data () {
@@ -89,6 +90,29 @@ export default {
         this.$router.push({ name: 'login' })
       }).catch((err) => {
         console.error(err)
+      })
+    },
+    fixPass () {
+      this.$ajax.post('/api/user/changePwd', {
+        telephone: this.userInfo.telephone,
+        oldPwd: md5(this.fixPassObj.oldpass),
+        newPwd: md5(this.fixPassObj.newpass1),
+        repeatPwd: md5(this.fixPassObj.newpass2)
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.showPass = false
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
       })
     }
   }

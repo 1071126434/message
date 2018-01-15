@@ -116,7 +116,7 @@
         <el-date-picker v-model="acTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyyMMdd" style="margin-right:48px;margin-left:20px;width:360px;">
         </el-date-picker>
         <b class="btn" @click="getSendTrend">搜索</b>
-        <el-button style="float:right">下载失败日志</el-button>
+        <el-button style="float:right" @click="downFailLog">下载失败日志</el-button>
       </div>
       <div class="sendChart" ref="sendChart"></div>
     </div>
@@ -588,6 +588,10 @@ export default {
           this.$message.error('服务器错误！')
         })
       }
+    },
+    // 下载失败日志
+    downFailLog () {
+      window.open('/api/homepage/downloadFail')
     },
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)

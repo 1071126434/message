@@ -11,7 +11,7 @@
         <ul class="list">
           <li>
             <span>余额：</span>
-            <strong>￥{{this.$route.query.moneyNum}}</strong>
+            <strong>￥{{this.$route.query.moneyNum || 0}}</strong>
           </li>
           <li>
             <span>充值金额：</span>
