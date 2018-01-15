@@ -539,10 +539,16 @@ export default {
           let xData = []
           let aNum = []
           let sNum = []
-          for (let i of res) {
-            xData.push(i.hour)
-            aNum.push(i.quireNum)
-            sNum.push(i.successNum)
+          if (res.length === 0) {
+            xData = [0]
+            aNum = [0]
+            sNum = [0]
+          } else {
+            for (let i of res) {
+              xData.push(i.hour)
+              aNum.push(i.quireNum)
+              sNum.push(i.successNum)
+            }
           }
           this.sendOption.xAxis.data = xData
           this.sendOption.series[0].data = aNum
