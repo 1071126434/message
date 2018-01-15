@@ -29,7 +29,7 @@
           <div class="inputCode">
             <div class="smInput input" :class="{'actives':focusCode}">
               <img src="../../assets/images/password.png" alt="">
-              <input type="password" v-model="code" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
+              <input type="text" v-model="code" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
             </div>
             <span class="testButton" v-show="!isCan">
               验证码
@@ -164,14 +164,33 @@ export default {
       }).then((data) => {
         console.log(data)
         if (data.data.code === '200') {
-          this.setUserInfo(data.data.data)
-          this.setUserToken(data.headers.accesstoken)
           this.$message({
             message: '注册成功',
-            type: 'success',
-            onClose: () => {
-              this.$router.push({ name: 'certification' })
+            type: 'success'
+          })
+          this.$ajax.post('/api/user/login', {
+            telephone: data.data.data.telephone,
+            password: md5(this.newpass)
+          }).then(data => {
+            console.log(data)
+            if (data.data.code === '200') {
+              this.setUserInfo(data.data.data)
+              this.setUserToken(data.headers.accesstoken)
+              this.$message({
+                message: '页面跳转中...',
+                type: 'success',
+                onClose: () => {
+                  this.$router.push({ name: 'certification' })
+                }
+              })
+            } else {
+              this.$message({
+                message: data.data.message,
+                type: 'warning'
+              })
             }
+          }).catch(() => {
+            this.$message.error('服务器错误！')
           })
         } else {
           this.$message({

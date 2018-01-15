@@ -201,7 +201,7 @@ export default {
           sendType: word.sendType === '0' && word.sendTimeType === '0' ? 'csv上传发送' : word.sendType === '0' && word.sendTimeType === '1' ? 'csv上传定时发送' : word.sendType === '1' && word.sendTimeType === '0' ? '单条发送' : '单条定时发送',
           creatTime: word.gmtCreate,
           sendTime: word.gmtModify,
-          taskState: word.status === '0' ? '待发送' : word.status === '1' ? '发送完成' : '已撤销',
+          taskState: word.status === '0' ? '待发送' : word.status === '1' ? '发送完成' : word.status === '2' ? '已撤销' : '发送中',
           sendTotal: word.totalNum || 0,
           sendNo: word.failNum || 0,
           taskId: word.taskId,

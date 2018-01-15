@@ -58,7 +58,7 @@
         </li>
         <li style="text-align:center;margin-top:20px">
           <!-- <el-button type="info" disabled v-show="status">提交审核</el-button> -->
-          <el-button type="primary" style="margin-left:-1px" @click="submit">提交审核</el-button>
+          <el-button type="primary" style="margin-left:-1px" @click="submit">确认修改</el-button>
           <p class="wordText">注意:提交审核后,系统将会在一个工作日内完成审核</p>
         </li>
       </ul>

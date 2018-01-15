@@ -267,7 +267,7 @@ export default {
         })
         return false
       }
-      if (this.value === '' || this.textarea2 === '' || this.textarea3) {
+      if (this.value === '' || this.textarea2 === '' || this.textarea3 === '') {
         this.$message({
           message: '请正确填写内容,不能为空',
           type: 'warning'
@@ -296,7 +296,7 @@ export default {
         sendType: this.radio1,
         accountId: this.userInfo.userId,
         type: 1,
-        totalNum: 1,
+        totalNum: this.realNum,
         sendTime: this.value1 || '',
         realUrl: this.textarea3
       }).then(data => {

@@ -60,7 +60,7 @@ export default {
       modelArr: [],
       apiUrl: '/api/homepage/getSignList',
       pageTotal: 0,
-      pageSize5: 10
+      pageSize: 10
     }
   },
   computed: {
@@ -82,7 +82,7 @@ export default {
       for (let word of data) {
         let goods = {
           signName: word.sign || '暂无数据',
-          signType: word.type === 3 ? '营销短信' : '系统短信' || '暂无数据',
+          signType: word.type === 3 ? '营销短信' : word.type === 1 ? '通知短信' : '验证码',
           status: word.status,
           id: word.id,
           remarks: word.remarks

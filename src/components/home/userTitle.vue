@@ -12,9 +12,13 @@
             <strong>已认证</strong>
           </span>
         </router-link>
-        <span class="record" v-if="userInfo.status===0">
+        <span class="record" v-if="userInfo.status===4">
           <i class="iconfont icon-qi2"></i>
           <strong>认证驳回</strong>
+        </span>
+        <span class="record" v-if="userInfo.status===3">
+          <i class="iconfont icon-qi2"></i>
+          <strong>认证中</strong>
         </span>
       </div>
       <div class="info" @click="showInfo=!showInfo">

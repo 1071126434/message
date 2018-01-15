@@ -325,7 +325,7 @@ export default {
         let arr1 = []
         for (let word of res.data.datas) {
           arr.push(word.pvNum)
-          arr1.push((word.gmtModify).substr(11, 5))
+          arr1.push((word.hour + ':' + word.minute))
         }
         this.sendOption.series[0].data = arr
         this.sendOption.xAxis.data = arr1

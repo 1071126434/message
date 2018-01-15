@@ -287,7 +287,7 @@ export default {
         sendType: this.radio1,
         accountId: this.userInfo.userId,
         type: 0,
-        totalNum: this.tiao,
+        totalNum: this.realNum,
         sendTime: this.value1 || ''
       }).then(data => {
         console.log(data)
