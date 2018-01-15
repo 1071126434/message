@@ -13,7 +13,7 @@
         </div>
         <p>
           {{ item.payIntro1 }}
-          <strong>0.045元/条</strong>
+          <strong>{{ item.feeRules }}元/条</strong>
           {{ item.payIntro2 }}
         </p>
         <el-table :data="item.marketArr" class="border" style="width: 100%;border: 1px solid #C0CCDA">
@@ -23,11 +23,11 @@
           </el-table-column>
           <el-table-column prop="lev2" label="20万≤量≤30万" align="center">
           </el-table-column>
-          <el-table-column prop="lev3" label="30万≤量≤50万" align="center">
+          <el-table-column prop="lev3" label="30万≤量≤40万" align="center">
           </el-table-column>
-          <el-table-column prop="lev4" label="50万≤量≤100万" align="center">
+          <el-table-column prop="lev4" label="40万≤量≤50万" align="center">
           </el-table-column>
-          <el-table-column prop="lev5" label="100万≤量" align="center">
+          <el-table-column prop="lev5" label="50万≤量" align="center">
           </el-table-column>
         </el-table>
       </div>
@@ -35,22 +35,24 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
 export default {
   name: 'fee',
   data () {
     return {
+      rulesFeeArr: [],
       rulesArr: [{
-        title: '营销短信',
-        payIntro1: '营销短信收费标准为',
+        title: '通知短信',
+        payIntro1: '通知短信收费标准为',
         feeRules: '0.045',
-        payIntro2: '，同时平台推出优惠活动，按阶梯进行优惠，详情如下表：用于发送营销推广类短信，如会员关怀、新品上线、活动通知等',
+        payIntro2: '，同时平台推出优惠活动，按阶梯进行优惠，详情如下表：用于发送系统通知类短信，如物流通知、付款回执、状态通知等',
         marketArr: [{
-          userNum: '优惠(元 / 条)',
-          lev1: '-0.001',
-          lev2: '-0.002',
-          lev3: '-0.003',
-          lev4: '-0.004',
-          lev5: '-0.005'
+          userNum: '价格(元 / 条)',
+          lev1: '-0.000',
+          lev2: '-0.000',
+          lev3: '-0.000',
+          lev4: '-0.000',
+          lev5: '-0.000'
         }]
       }, {
         title: '验证码短信',
@@ -58,25 +60,25 @@ export default {
         feeRules: '0.045',
         payIntro2: '，同时平台推出优惠活动，按阶梯进行优惠，详情如下表：用于发送验证码类短信，如登录验证、支付确认、登录异常等',
         marketArr: [{
-          userNum: '优惠(元 / 条)',
-          lev1: '-0.001',
-          lev2: '-0.002',
-          lev3: '-0.003',
-          lev4: '-0.004',
-          lev5: '-0.005'
+          userNum: '价格(元 / 条)',
+          lev1: '-0.000',
+          lev2: '-0.000',
+          lev3: '-0.000',
+          lev4: '-0.000',
+          lev5: '-0.000'
         }]
       }, {
-        title: '通知短信',
-        payIntro1: '通知短信收费标准为',
+        title: '营销短信',
+        payIntro1: '营销短信收费标准为',
         feeRules: '0.045',
-        payIntro2: '，同时平台推出优惠活动，按阶梯进行优惠，详情如下表：用于发送系统通知类短信，如物流通知、付款回执、状态通知等',
+        payIntro2: '，同时平台推出优惠活动，按阶梯进行优惠，详情如下表：用于发送营销推广类短信，如会员关怀、新品上线、活动通知等',
         marketArr: [{
-          userNum: '优惠(元 / 条)',
-          lev1: '-0.001',
-          lev2: '-0.002',
-          lev3: '-0.003',
-          lev4: '-0.004',
-          lev5: '-0.005'
+          userNum: '价格(元 / 条)',
+          lev1: '-0.000',
+          lev2: '-0.000',
+          lev3: '-0.000',
+          lev4: '-0.000',
+          lev5: '-0.000'
         }]
       }, {
         title: '效果追踪短信',
@@ -84,15 +86,53 @@ export default {
         feeRules: '0.045',
         payIntro2: '，同时平台推出优惠活动，按阶梯进行优惠，详情如下表：用于查看营销短信中的链接被用户打开情况',
         marketArr: [{
-          userNum: '优惠(元 / 条)',
-          lev1: '-0.001',
-          lev2: '-0.002',
-          lev3: '-0.003',
-          lev4: '-0.004',
-          lev5: '-0.005'
+          userNum: '价格(元 / 条)',
+          lev1: '-0.000',
+          lev2: '-0.000',
+          lev3: '-0.000',
+          lev4: '-0.000',
+          lev5: '-0.000'
         }]
       }]
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
+  methods: {
+    getRules () {
+      this.$ajax.post('/api/homepage/getChargingRule', {
+        account: this.userInfo.userId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          let res = data.data.data
+          this.rulesFeeArr = res
+          for (let i = 0; i < res.length; i++) {
+            this.rulesArr[i].feeRules = res[i].priceOne
+            this.rulesArr[i].marketArr = [{
+              userNum: '价格(元 / 条)',
+              lev1: res[i].priceTwo,
+              lev2: res[i].priceThree,
+              lev3: res[i].priceFour,
+              lev4: res[i].priceFive,
+              lev5: res[i].priceSix
+            }]
+          }
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    }
+  },
+  mounted () {
+    this.getRules()
   }
 }
 </script>
