@@ -7,13 +7,13 @@
         </div>
         <div class="right">
           <p>账户余额(元)：
-            <strong>￥{{ topInfoObj.balance }}</strong>
+            <strong>￥{{ topInfoObj.balance || 0 }}</strong>
             <b class="small-btn" @click="$router.push({name: 'recharge',query:{moneyNum: topInfoObj.balance}})">充值</b>
           </p>
           <p>
             <span class="link" @click="$router.push({name: 'fee'})">收费标准</span>
             <span class="link" @click="$router.push({name: 'orders'})">查看账单</span>
-            <span class="link" @click="showLeftMoney=true">余额预警：￥{{ topInfoObj.alarmValue }}</span>
+            <span class="link" @click="showLeftMoney=true">余额预警：￥{{ topInfoObj.alarmValue || 0 }}</span>
           </p>
         </div>
       </li>
@@ -23,10 +23,10 @@
         </div>
         <div class="right">
           <p>今日发送成功数(条)：
-            <strong>{{ topInfoObj.todaySendCount }}</strong>
+            <strong>{{ topInfoObj.todaySendCount || 0 }}</strong>
           </p>
           <p>
-            <span>累计：￥{{ topInfoObj.todayMoney }}</span>
+            <span>累计：￥{{ topInfoObj.todayMoney || 0 }}</span>
           </p>
         </div>
       </li>
@@ -36,10 +36,10 @@
         </div>
         <div class="right">
           <p>本月发送成功数(条)：
-            <strong>{{ topInfoObj.sendCount }}</strong>
+            <strong>{{ topInfoObj.sendCount || 0 }}</strong>
           </p>
           <p>
-            <span>累计：￥{{ topInfoObj.monthMoney }}</span>
+            <span>累计：￥{{ topInfoObj.monthMoney || 0 }}</span>
           </p>
         </div>
       </li>
@@ -116,7 +116,7 @@
         <el-date-picker v-model="acTime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyyMMdd" style="margin-right:48px;margin-left:20px;width:360px;">
         </el-date-picker>
         <b class="btn" @click="getSendTrend">搜索</b>
-        <el-button style="float:right">下载失败日志</el-button>
+        <el-button style="float:right" @click="downFailLog">下载失败日志</el-button>
       </div>
       <div class="sendChart" ref="sendChart"></div>
     </div>
@@ -126,7 +126,7 @@
           <i class="el-icon-circle-plus model" @click="$router.push({name: 'addModel'})"></i>
         </h2>
         <div>
-          <strong>{{ topInfoObj.templateCount }}</strong>
+          <strong>{{ topInfoObj.templateCount || 0 }}</strong>
           <span>(可用)</span>
           <b class="small-btn" @click="$router.push({name: 'modelManger'})">查看</b>
         </div>
@@ -136,7 +136,7 @@
           <i class="el-icon-circle-plus sign" @click="$router.push({name: 'addSign'})"></i>
         </h2>
         <div>
-          <strong>{{ topInfoObj.signCount }}</strong>
+          <strong>{{ topInfoObj.signCount || 0 }}</strong>
           <span>(可用)</span>
           <b class="small-btn" @click="$router.push({name: 'manger'})">查看</b>
         </div>
@@ -501,10 +501,16 @@ export default {
           let xData = []
           let aNum = []
           let sNum = []
-          for (let i of res) {
-            xData.push(i.hour)
-            aNum.push(i.quireNum)
-            sNum.push(i.successNum)
+          if (res.length === 0) {
+            xData = [0]
+            aNum = [0]
+            sNum = [0]
+          } else {
+            for (let i of res) {
+              xData.push(i.hour)
+              aNum.push(i.quireNum)
+              sNum.push(i.successNum)
+            }
           }
           this.sendOption.xAxis.data = xData
           this.sendOption.series[0].data = aNum
@@ -544,6 +550,10 @@ export default {
           this.$message.error('服务器错误！')
         })
       }
+    },
+    // 下载失败日志
+    downFailLog () {
+      window.open('/api/homepage/downloadFail')
     },
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
