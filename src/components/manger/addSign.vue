@@ -33,7 +33,7 @@
           <span>授权书</span>
           <div class="model">
             <p>请您
-              <i>下载授权书模板</i>，填写、打印并盖章后，拍照上传
+              <i @click="uploadModel">下载授权书模板</i>，填写、打印并盖章后，拍照上传
             </p>
             <el-upload class="uploader" :show-file-list="false" :http-request="uploadImg" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" ref="upload" action="">
               <img v-if="imgUrl" :src="imgUrl" class="avatar">
@@ -45,7 +45,9 @@
         <li>
           <span></span>
           <b class="btn" @click="submit">提交审核</b>
-          <b class="btn-b">取 消</b>
+          <router-link :to="{name:'manger'}">
+            <b class="btn-b">取 消</b>
+          </router-link>
         </li>
         <li>
           <p>温馨提示
@@ -123,6 +125,10 @@ export default {
           this.isCanUpload = true
         })
       }
+    },
+    // 点击下载授权书模板进行下载
+    uploadModel () {
+      window.open('http://smsfile.oss-cn-hangzhou.aliyuncs.com/%E7%AD%BE%E5%90%8D%E6%8E%88%E6%9D%83%E5%A7%94%E6%89%98%E4%B9%A6-%E6%A8%A1%E6%9D%BF.docx')
     },
     submit () {
       if (this.addObj.signName === '' || this.picUrl === '') {

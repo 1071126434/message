@@ -3,8 +3,10 @@
     <div class="certification">
       <h1>企业信息认证</h1>
       <p class="state">审核状态:
-        <span v-if="this.userInfo.status===2">未认证</span>
-        <span v-else>未通过</span>
+        <span v-if="this.userInfo.status===2">认证中</span>
+        <span v-if="this.userInfo.status===3">未认证</span>
+        <span v-if="this.userInfo.status===4">未通过</span>
+        <span v-if="this.userInfo.status===1">已认证</span>
       </p>
       <div class="line"></div>
       <ul>

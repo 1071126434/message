@@ -3,8 +3,10 @@
     <div class="certification">
       <h1>企业信息认证</h1>
       <p class="state">审核状态:
-        <span v-if="this.userInfo.status===2">未认证</span>
-        <span v-else>已认证</span>
+        <span v-if="this.userInfo.status===2">认证中</span>
+        <span v-if="this.userInfo.status===3">未认证</span>
+        <span v-if="this.userInfo.status===4">未通过</span>
+        <span v-if="this.userInfo.status===1">已认证</span>
       </p>
       <div class="line"></div>
       <ul>
@@ -189,10 +191,10 @@ export default {
         console.log(data)
         if (data.data.code === '200') {
           this.$message({
-            message: '信息提交成功,请耐心等待',
+            message: '信息提交成功,请耐心等待,请重新登录',
             type: 'success',
             onClose: () => {
-              this.$router.push({ name: 'index' })
+              this.$router.push({ name: 'login' })
             }
           })
         } else {

@@ -27,7 +27,7 @@
         </li>
         <li class="content">
           <span>短信内容</span>
-          <textarea name="" class="input" cols="40" rows="10" placeholder="请输入内容" v-model="textarea2" @input="descInput"></textarea>
+          <textarea name="" class="input" cols="40" rows="10" placeholder="请输入内容" v-model="textarea2" @input="descInput" @blur="sendContent"></textarea>
           <p>
             <em>{{word}}</em>个字,共
             <em>{{tiao}}</em>条短信(每
@@ -47,8 +47,8 @@
           <el-input v-model="input" placeholder="请输入手机号" v-if="phone"></el-input>
         </li>
         <li class="instructions">
-          单价:¥{{normalMarketPrice}}/条 费用总计:¥{{normalMarketPrice*tiao}} 余额:¥{{money}} 请先
-          <span class="coinpay">充值</span>
+          单价:¥{{normalMarketPrice}}/条 费用总计:¥{{normalMarketPrice*tiao}} 余额:¥{{money}}
+          <span class="coinpay" v-show="coinPayShow">充值</span>
         </li>
         <li class="iconfont">
           <!-- <p>
@@ -68,7 +68,7 @@
             <span style="color:green">上传中</span>
           </p>
         </li>
-        <li style="margin-left:100px">
+        <li style="margin-left:100px" v-show="oneSendShow">
           共计上传{{totalNum}}个手机号,成功解析{{realNum}}个,解析失败{{loser}}个
           <span style="color:#ff3341;cursor:pointer" @click="download">下载失败详情</span>
         </li>
@@ -132,12 +132,23 @@ export default {
       money: 0,
       normalMarketPrice: 0,
       options: [],
-      value: ''
+      value: '',
+      oneSendShow: true,
+      coinPayShow: false
     }
   },
   created () {
     this.getsign()
     this.moneyNum()
+    if (this.money < (this.specialMarketPrice)) {
+      this.coinPayShow = true
+      this.$message({
+        message: '余额不足,请充值',
+        type: 'warning'
+      })
+      return false
+    }
+    this.textarea2 = sessionStorage.getItem('smsContentNoner')
   },
   computed: {
     inputArr: function () {
@@ -155,6 +166,9 @@ export default {
 
   },
   methods: {
+    sendContent () {
+      sessionStorage.setItem('smsContentNoner', this.textarea2)
+    },
     btn () {
       console.log(this.radio1)
     },
@@ -168,11 +182,13 @@ export default {
       this.phone = false
       this.allUplaod = true
       this.send = false
+      this.oneSendShow = true
     },
     oneSend () {
       this.phone = true
       this.allUplaod = false
       this.send = true
+      this.oneSendShow = false
     },
     descInput () {
       let length = this.textarea2.length
@@ -366,7 +382,7 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .sendInfo
   overflow hidden
-  min-width 1150px
+  min-width 1130px
   .sendTop
     padding 12px 0px 12px 16px
     color #525F75

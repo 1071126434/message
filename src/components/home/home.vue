@@ -69,6 +69,8 @@
         </div>
       </div>
     </div>
+    <!-- 遮罩层 -->
+    <div class="wrap" v-show="wrap"></div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -84,7 +86,9 @@ export default {
   data () {
     return {
       Nocertification: true,
-      noPass: false
+      noPass: false,
+      ceshi: true,
+      wrap: false
     }
   },
   computed: {
@@ -95,6 +99,7 @@ export default {
   methods: {
     go () {
       this.Nocertification = false
+      this.wrap = true
     },
     change () {
       this.noPass = false
@@ -108,9 +113,17 @@ export default {
   display flex
   flex 1
   background #E8EBF0
+  position relative
   .left
     flex 0 0 180px
     background #19223D
+  .wrap
+    position absolute
+    top 0px
+    left 0
+    width 180px
+    height 100%
+    background rgba(0, 0, 0, 0)
   .right
     flex 1
     display flex

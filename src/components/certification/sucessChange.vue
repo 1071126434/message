@@ -3,8 +3,10 @@
     <div class="certification">
       <h1>企业信息认证</h1>
       <p class="state">审核状态:
-        <span v-if="this.userInfo.status===2">未认证</span>
-        <span v-else>未通过</span>
+        <span v-if="this.userInfo.status===2">认证中</span>
+        <span v-if="this.userInfo.status===3">未认证</span>
+        <span v-if="this.userInfo.status===4">未通过</span>
+        <span v-if="this.userInfo.status===1">已认证</span>
       </p>
       <div class="line"></div>
       <ul>
@@ -98,7 +100,10 @@ export default {
       isCanUpload: false,
       getObj: {},
       showLookImg: false,
-      lookImgUrl: ''
+      lookImgUrl: '',
+      itemProCode: '',
+      itemCityCode: '',
+      itemZoneCode: ''
     }
   },
   computed: {
@@ -140,7 +145,6 @@ export default {
         console.log(res)
         if (res.data.code === '200') {
           uploadFile(res.data.data, img.file).then((res) => {
-            console.log(1111)
             this.imageUrl = res.url || `http://smsfile.oss-cn-hangzhou.aliyuncs.com/${res.name}`
           }).catch(() => {
             this.$message.error('网络错误，请刷新试试')
@@ -188,38 +192,31 @@ export default {
           this.input5 = res.concatPhone
           this.input6 = res.concatEmail
           this.imageUrl = res.businessLicenceUrl
+          this.itemProCode = res.provinceId
+          this.itemCityCode = res.cityId
+          this.itemZoneCode = res.areaId
         } else {
           this.$message({
             message: data.data.message,
             type: 'warning'
           })
         }
-      }).catch(() => {
+      }).catch((error) => {
+        console.log(error)
         this.$message.error('服务器错误！')
       })
     },
     submit () {
-      this.$ajax.post('/api/companyCertify/submit', {
-        companyName: this.companyName,
-        provinceCode: this.itemPro.code,
-        provinceDetail: this.itemPro.name,
-        cityCode: this.itemCity.code,
-        cityDetail: this.itemCity.name,
-        areaCode: this.itemZone.code,
-        areaDetail: this.itemZone.name,
-        address: this.input,
-        companyCreditCode: this.input2,
-        legalName: this.input3,
+      this.$ajax.post('/api/companyCertify/updateCompanyInfo', {
         concatName: this.input4,
         concatTelephone: this.input5,
         concatEmail: this.input6,
-        picUrl: this.imageUrl,
         accountId: this.userInfo.userId
       }).then(data => {
         console.log(data)
         if (data.data.code === '200') {
           this.$message({
-            message: '信息提交成功,请耐心等待',
+            message: '修改成功',
             type: 'success',
             onClose: () => {
               this.$router.push({ name: 'index' })

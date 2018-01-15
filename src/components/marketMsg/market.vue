@@ -88,7 +88,7 @@
           <span style="float:right">发送成功数: {{details.sedSucess}}条</span>
         </li>
         <li>
-          <span>发送成功率: {{details.sedSucessPer}}%</span>
+          <span>发送成功率: {{details.sedSucessPer|reverse}}%</span>
           <span style="float:right">发送失败数: {{details.sendNo}}条</span>
         </li>
       </ul>
@@ -115,11 +115,11 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import Vue from 'vue'
 import { pageCommon } from '../../assets/js/mixin.js'
 import { mapGetters } from 'vuex'
 import noCont from '../../base/noCont/noCont'
 import lottie from '../../base/lottie/index'
-import Vue from 'vue'
 export default {
   name: 'market',
   mixins: [pageCommon],
@@ -132,7 +132,7 @@ export default {
       if (message === 1) {
         return message + '00'
       } else {
-        return message.toFixed(2) * 100
+        return (message * 100).toFixed(2)
       }
     })
     return {
@@ -143,16 +143,20 @@ export default {
       dialogVisible: false,
       centerDialogVisible: false,
       centerDialogVisibleDel: false,
-      options: [{
-        value: '0',
-        label: '待发送'
-      }, {
-        value: '1',
-        label: '已发送'
-      }, {
-        value: '2',
-        label: '已撤销'
-      }],
+      options: [
+        {
+          value: '',
+          label: '全部'
+        }, {
+          value: '0',
+          label: '待发送'
+        }, {
+          value: '1',
+          label: '发送完成'
+        }, {
+          value: '2',
+          label: '已撤销'
+        }],
       value: '',
       tableData: [],
       apiUrl: '/api/sms/getTaskListByCondition',
@@ -209,7 +213,7 @@ export default {
           this.getList()
         } else {
           this.$message({
-            message: data.data.message,
+            message: '30分钟以内的短信不能进行撤销',
             type: 'warning'
           })
         }
@@ -251,6 +255,11 @@ export default {
     searchBtn () {
       this.getList()
     },
+    // 点击日志,下载失败的日志
+    handleClickWork (index, val) {
+      // console.log(val)
+      window.open('/api/market/downloadTaskErrorDetailByTaskId?taskId=' + val.taskId)
+    },
     setList (data) {
       let arr = []
       for (let word of data) {
@@ -280,7 +289,7 @@ export default {
   margin 16px
   position relative
   overflow hidden
-  min-width 1080px
+  min-width 1000px
   h1
     padding 12px 0px 12px 20px
     float left
@@ -298,7 +307,7 @@ export default {
     color #5E6D82
     li
       float left
-      margin-right 48px
+      margin-right 27px
   .btns
     clear both
     padding 16px 20px 20px 20px

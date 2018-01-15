@@ -28,7 +28,7 @@
       </ul>
       <div class="btns">
         <router-link :to="{name:'marketEffectSend'}">
-          <el-button>发送营销短信</el-button>
+          <el-button>发送追踪短信</el-button>
         </router-link>
         <el-button style="float:right" @click="exports">导出</el-button>
       </div>
@@ -97,11 +97,14 @@ export default {
       centerDialogVisibleDel: false,
       task: false,
       options: [{
+        value: '',
+        label: '全部'
+      }, {
         value: '0',
         label: '待发送'
       }, {
         value: '1',
-        label: '已发送'
+        label: '发送完成'
       }, {
         value: '2',
         label: '已撤销'
@@ -160,7 +163,7 @@ export default {
           this.getList()
         } else {
           this.$message({
-            message: data.data.message,
+            message: '30分钟以内的短信不能进行撤销',
             type: 'warning'
           })
         }
@@ -193,24 +196,31 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
+    // 点击日志进行下载
+    handleClickWork (index, val) {
+      window.open('/api/market/downloadTaskErrorDetailByTaskId?taskId=' + val.taskId)
+    },
     setList (data) {
       let arr = []
       for (let word of data) {
         let goods = {
-          sendCont: word.content || '暂无数据',
+          sendCont: word.content + ';' + word.realUrl || '暂无数据',
           sendType: word.sendType === '0' && word.sendTimeType === '0' ? 'csv上传发送' : word.sendType === '0' && word.sendTimeType === '1' ? 'csv上传定时发送' : word.sendType === '1' && word.sendTimeType === '0' ? '单条发送' : '单条定时发送',
           creatTime: word.gmtCreate,
-          sendTime: word.gmtModify,
+          sendTime: word.sendTime || '暂无数据',
           taskState: word.status === '0' ? '待发送' : word.status === '1' ? '发送完成' : word.status === '2' ? '已撤销' : '发送中',
           sendTotal: word.totalNum || 0,
           sendNo: word.failNum || 0,
           taskId: word.taskId,
           sign: word.sign,
           successNum: word.successNum || 0,
-          click: word.clickPvNum || 0,
+          click: word.clickUvNum || 0,
           content: word.content,
           successNumLv: (word.successNum || 0) / (word.totalNum || 0),
-          clickLv: (word.clickPvNum || 0) / (word.totalNum || 0)
+          clickLv: (word.clickUvNum || 0) / (word.totalNum || 0),
+          failNum: word.failNum,
+          // 短信多少
+          numPerSms: word.numPerSms
         }
         arr.push(goods)
       }
@@ -225,7 +235,7 @@ export default {
   margin 16px
   position relative
   overflow hidden
-  min-width 1080px
+  min-width 1000px
   h1
     padding 12px 0px 12px 20px
     float left
@@ -251,7 +261,7 @@ export default {
     color #5E6D82
     li
       float left
-      margin-right 48px
+      margin-right 27px
   .btns
     clear both
     padding 16px 20px 20px 20px

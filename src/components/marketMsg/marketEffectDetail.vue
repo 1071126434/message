@@ -39,7 +39,7 @@
         </ul>
         <ul>
           <li>点击数:
-            <span>{{this.sellerInfo.click}}条</span>
+            <span>{{this.sellerInfo.click}}人次</span>
           </li>
           <li>点击率:
             <span>{{this.sellerInfo.clickLv|reverse}}%</span>
@@ -116,6 +116,8 @@
             </el-table-column>
             <el-table-column prop="sendTime" label="是否打开链接" align="center">
             </el-table-column>
+            <el-table-column prop="clickNum" label="点击次数" align="center">
+            </el-table-column>
             <el-table-column prop="taskState" label="打开链接时间" align="center">
             </el-table-column>
           </el-table>
@@ -146,7 +148,7 @@ export default {
       if (message === 1) {
         return message + '00'
       } else {
-        return message.toFixed(2) * 100
+        return (message * 100).toFixed(2)
       }
     })
     return {
@@ -174,7 +176,6 @@ export default {
         },
         series: [
           {
-            name: '点击数',
             type: 'line',
             symbol: 'none',
             smooth: true,
@@ -194,7 +195,7 @@ export default {
         },
         series: [
           {
-            name: '点击率',
+            name: '追踪短信',
             type: 'pie',
             radius: ['50%', '70%'],
             color: ['#40B6FF ', '#FF9F00'],
@@ -231,7 +232,7 @@ export default {
         },
         series: [
           {
-            name: '发送成功率',
+            name: '追踪短信',
             type: 'pie',
             radius: ['50%', '70%'],
             color: ['#0F81EB ', '#4A55C1'],
@@ -268,8 +269,8 @@ export default {
       centerDialogVisible: false,
       centerDialogVisibleDel: false,
       options: [{
-        value: '0',
-        label: '待发送'
+        value: '',
+        label: '全部'
       }, {
         value: '1',
         label: '已发送'
@@ -309,7 +310,7 @@ export default {
   },
   created () {
     this.setPiont.series[0].data[0].value = this.sellerInfo.click
-    this.setPiont.series[0].data[1].value = this.sellerInfo.successNum - this.sellerInfo.click
+    this.setPiont.series[0].data[1].value = this.sellerInfo.sendTotal - this.sellerInfo.click
     this.setSucess.series[0].data[0].value = this.sellerInfo.successNum
     this.setSucess.series[0].data[1].value = this.sellerInfo.sendTotal - this.sellerInfo.successNum
     // console.log()
@@ -325,6 +326,9 @@ export default {
         let arr1 = []
         for (let word of res.data.datas) {
           arr.push(word.pvNum)
+          if (word.minute === 0) {
+            word.minute = word.minute + '0'
+          }
           arr1.push((word.hour + ':' + word.minute))
         }
         this.sendOption.series[0].data = arr
@@ -385,8 +389,9 @@ export default {
           sendCont: word.phoneNo || '暂无数据',
           sendType: word.smsStatus === '0' ? '待发送' : word.smsStatus === '1' ? '已发送' : word.sendType === '2' ? '发送成功' : '发送失败',
           creatTime: word.sendTime || '暂无数据',
-          sendTime: word.whetherOpenUrl === 0 ? '是' : '否',
-          taskState: word.openUrlTime || '暂无数据'
+          sendTime: word.whetherOpenUrl === '1' ? '是' : '否',
+          taskState: word.openUrlTime || '暂无数据',
+          clickNum: word.clickTimes
         }
         arr.push(goods)
       }
@@ -434,7 +439,7 @@ export default {
           span
             color #414C62
         .widthContent span
-          width 200px
+          width 300px
           display inline-block
           vertical-align top
   .echart
