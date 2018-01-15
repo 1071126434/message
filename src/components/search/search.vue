@@ -47,6 +47,7 @@
           </el-table-column>
         </el-table>
       </div>
+      <lottie v-show="task"></lottie>
       <noCont v-if="searchArr.length===0"></noCont>
       <div class="pager" v-if="searchArr.length!==0">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
@@ -58,18 +59,20 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import noCont from '../../base/noCont/noCont'
-
 import { pageCommon } from '../../assets/js/mixin'
+import lottie from '../../base/lottie/index'
 export default {
   name: 'search',
   components: {
-    noCont
+    noCont,
+    lottie
   },
   mixins: [pageCommon],
   data () {
     return {
       phone: '',
       msgType: '2',
+      task: false,
       time: '',
       searchArr: [],
       apiUrl: '/api/homepage/getByPhoneTypeTime'
