@@ -15,24 +15,24 @@
       </div>
       <div v-if="activeIndex===1" class="count">
         <span>当月短信：
-          <strong>{{ feeNumObj.count ? feeNumObj.count : 0 }}</strong>条
+          <strong>{{ feeNumObj ? feeNumObj.count : 0 }}</strong>条
         </span>
         <span>当月费用：
-          <strong>{{ feeNumObj.fee ? feeNumObj.fee : 0 }}</strong>元
+          <strong>{{ feeNumObj ? feeNumObj.fee : 0 }}</strong>元
         </span>
         <span>预计优惠：
-          <strong>{{ feeNumObj.saleNum * feeNumObj.discount ? feeNumObj.saleNum * feeNumObj.discount : 0 }}</strong>元(预计在月终返还)
+          <strong>{{ feeNumObj ? feeNumObj.saleNum * feeNumObj.discount : 0 }}</strong>元(预计在月终返还)
         </span>
       </div>
       <div v-else class="count">
         <span>当月短信：
-          <strong>{{ feeNumObj.totalNum ? feeNumObj.totalNum : 0 }}</strong>条
+          <strong>{{ feeNumObj ? feeNumObj.totalNum : 0 }}</strong>条
         </span>
         <span>当月费用：
-          <strong>{{ feeNumObj.totalCost ? feeNumObj.totalCost : 0 }}</strong>元
+          <strong>{{ feeNumObj ? feeNumObj.totalCost : 0 }}</strong>元
         </span>
         <span>预计优惠：
-          <strong>{{ feeNumObj.totalDiscounts ? feeNumObj.totalDiscounts : 0 }}</strong>元(预计在月终返还)
+          <strong>{{ feeNumObj ? feeNumObj.totalDiscounts : 0 }}</strong>元(预计在月终返还)
         </span>
       </div>
       <lottie v-show="task"></lottie>
