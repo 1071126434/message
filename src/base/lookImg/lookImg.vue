@@ -9,7 +9,7 @@ export default {
   props: {
     imgUrl: {
       type: String,
-      default: 'http://img15.3lian.com/2015/h1/299/86.jpg'
+      default: ''
     }
   },
   data () {

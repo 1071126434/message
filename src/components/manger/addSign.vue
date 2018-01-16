@@ -40,6 +40,8 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <a>(照片支持jpg/png/jpeg格式，大小不超过2M)</a>
+            <p class="bigPic" @click="lookImg(imgUrl)">
+              <i class="el-icon-zoom-in"></i>放大图片</p>
           </div>
         </li>
         <li>
@@ -56,14 +58,21 @@
           </p>
         </li>
       </ul>
+      <div v-show="showLookImg ">
+        <lookImg :imgUrl="lookImgUrl " @close="showLookImg=false "></lookImg>
+      </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { uploadPromise, uploadFile, getFileWidthAndHeight } from '../../assets/js/upload'
 import { mapGetters } from 'vuex'
+import LookImg from '../../base/lookImg/lookImg'
 export default {
   name: 'addSign',
+  components: {
+    LookImg
+  },
   data () {
     return {
       addObj: {
@@ -75,7 +84,9 @@ export default {
       checked: false,
       checked1: false,
       checked2: false,
-      isCanUpload: false
+      isCanUpload: false,
+      showLookImg: false,
+      lookImgUrl: ''
     }
   },
   computed: {
@@ -91,6 +102,11 @@ export default {
     }
   },
   methods: {
+    lookImg (url) {
+      console.log(url)
+      this.showLookImg = true
+      this.lookImgUrl = url
+    },
     uploadImg (img) {
       if (!this.isCanUpload) {
         return false
@@ -138,7 +154,7 @@ export default {
         })
         return false
       }
-      if (this.checked2 === false && this.checked === false) {
+      if (this.checked2 === false && this.checked === false && this.checked1 === false) {
         this.$message({
           message: '请先勾选短信类型',
           type: 'warning'
@@ -216,6 +232,8 @@ export default {
           i
             color #3EAFFF
             cursor pointer
+        .bigPic
+          margin-top -19px
         span
           display inline-block
           width 100px
