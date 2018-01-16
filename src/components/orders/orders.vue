@@ -4,7 +4,7 @@
     <div class="cont">
       <div class="inputs">
         <span>月账单查询</span>
-        <el-date-picker v-model="month" @change="getList" type="month" value-format="yyyy-MM" placeholder="选择日期" class="inp">
+        <el-date-picker v-model="month" @change="monthChange" type="month" value-format="yyyy-MM" placeholder="选择日期" class="inp">
         </el-date-picker>
         <!-- <span class="btn">查询</span> -->
         <span class="download btn-b">下载账单</span>
@@ -166,6 +166,10 @@ export default {
       this.activeIndex = index
       this.getFeeNum()
       this.getList()
+    },
+    monthChange () {
+      this.getList()
+      this.getFeeNum()
     },
     // 获取优惠详情
     getFeeNum () {
