@@ -13,8 +13,10 @@
           </el-option>
           <el-option label="营销短信" value="3">
           </el-option>
+          <!-- <el-option label="全部" value="0">
+          </el-option> -->
         </el-select>
-        <span>活动时间</span>
+        <span>发送日期</span>
         <el-date-picker v-model="time" type="date" placeholder="选择日期" class="inp" format="yyyy-MM-dd" value-format='yyyyMMdd'>
         </el-date-picker>
         <span class="btn" @click="getList">查询</span>

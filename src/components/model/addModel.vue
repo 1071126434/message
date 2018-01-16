@@ -83,28 +83,40 @@ export default {
     },
     // 添加模板
     addModel () {
-      this.$ajax.post('/api/template/addTemplate', {
-        type: this.addObj.modelType,
-        name: this.addObj.modelName,
-        content: this.addObj.modelCont,
-        accountId: this.userInfo.userId
-      }).then((data) => {
-        let res = data.data
-        if (res.code === '200') {
-          this.$message({
-            message: '添加成功!',
-            type: 'success'
-          })
-          this.$router.push({ name: 'modelManger' })
-        } else {
-          this.$message({
-            message: res.message,
-            type: 'warning'
-          })
-        }
-      }).catch((error) => {
-        this.$message.error(error)
-      })
+      if (this.addObj.modelName === '') {
+        this.$message({
+          message: '请输入模板名称!',
+          type: 'warning'
+        })
+      } else if (this.addObj.modelCont === '') {
+        this.$message({
+          message: '请输入模板内容!',
+          type: 'warning'
+        })
+      } else {
+        this.$ajax.post('/api/template/addTemplate', {
+          type: this.addObj.modelType,
+          name: this.addObj.modelName,
+          content: this.addObj.modelCont,
+          accountId: this.userInfo.userId
+        }).then((data) => {
+          let res = data.data
+          if (res.code === '200') {
+            this.$message({
+              message: '添加成功!',
+              type: 'success'
+            })
+            this.$router.push({ name: 'modelManger' })
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'warning'
+            })
+          }
+        }).catch((error) => {
+          this.$message.error(error)
+        })
+      }
     },
     // 修改模板
     fixModel () {
