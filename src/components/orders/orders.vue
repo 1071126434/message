@@ -4,10 +4,10 @@
     <div class="cont">
       <div class="inputs">
         <span>月账单查询</span>
-        <el-date-picker v-model="month" @change="monthChange" type="month" value-format="yyyyMM" placeholder="选择日期" class="inp">
+        <el-date-picker v-model="month" @change="monthChange" type="month" value-format="yyyy-MM" placeholder="选择日期" class="inp">
         </el-date-picker>
         <!-- <span class="btn">查询</span> -->
-        <span class="download btn-b">下载账单</span>
+        <span class="download btn-b" @click="downOrder">下载账单</span>
       </div>
       <div class="changeBar">
         <span @click="changeIndex(1)" :class="{'active': activeIndex==1}">系统短信</span>
@@ -138,7 +138,7 @@ export default {
         }
       } else {
         return {
-          month: this.month + '01',
+          month: this.month + '-01',
           accountId: this.userInfo.userId,
           currPageNo: this.pageNo,
           limit: this.pageSize
@@ -150,6 +150,14 @@ export default {
     ])
   },
   methods: {
+    // 下载账单
+    downOrder () {
+      if (this.activeIndex === 1) {
+        window.open(`/api/homepage/downloadMonthBill?month=${this.month}&account=${this.pageTotal}`)
+      } else {
+        window.open(`/api/sms/downloadMarketMonthBill?accountId=${this.userInfo.userId}&month=${this.month + '-01'}&currPageNo=1&limit=${this.pageTotal}`)
+      }
+    },
     // 初始化时间
     initTime () {
       let time = new Date()
@@ -158,7 +166,7 @@ export default {
       if (month < 10) {
         month = '0' + month
       }
-      this.month = year + month
+      this.month = year + '-' + month
       this.getList()
     },
     // 切换类型
@@ -192,7 +200,7 @@ export default {
         })
       } else {
         this.$ajax.post('/api/sms/getMarketSummaryOfSpecifyMonth', {
-          month: this.month + '01',
+          month: this.month + '-01',
           accountId: this.userInfo.userId
         }).then((data) => {
           let res = data.data
