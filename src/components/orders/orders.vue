@@ -153,7 +153,7 @@ export default {
     // 下载账单
     downOrder () {
       if (this.activeIndex === 1) {
-        window.open(`/api/homepage/downloadMonthBill?month=${this.month}&account=${this.pageTotal}`)
+        window.open(`/api/homepage/downloadMonthBill?month=${this.month}&accountId=${this.userInfo.userId}`)
       } else {
         window.open(`/api/sms/downloadMarketMonthBill?accountId=${this.userInfo.userId}&month=${this.month + '-01'}&currPageNo=1&limit=${this.pageTotal}`)
       }
