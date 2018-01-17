@@ -99,8 +99,7 @@
       <div class="picSend" style="margin-top:25px">
         <img :src="sendPic" alt="">
         <div class="scoll">
-          <!-- <div v-for="(item,index) in inputArr" :key="index">
-           
+          <!-- <div v-for="(item,index) in inputArr" :key="index">     
           </div> -->
           <p>{{textarea2}}</p>
         </div>
@@ -139,7 +138,8 @@ export default {
       options: [],
       value: '',
       oneSendShow: true,
-      coinPayShow: false
+      coinPayShow: false,
+      valueTime: ''
     }
   },
   created () {
@@ -298,6 +298,26 @@ export default {
         })
         return false
       }
+      if (this.radio === '1') {
+        if (this.value1 === '') {
+          this.$message({
+            message: '请正确输入日期,不能为空',
+            type: 'warning'
+          })
+          return false
+        } else {
+          this.valueTime = Date.parse(new Date()) + 11 * 60 * 1000
+          let timeStamp = (Date.parse(new Date(this.value1)))
+          console.log(timeStamp, this.valueTime)
+          if (timeStamp < this.valueTime) {
+            this.$message({
+              message: '定时发送日期应设置为10分钟以后的日期',
+              type: 'warning'
+            })
+            return false
+          }
+        }
+      }
       if (this.money < (this.specialMarketPrice)) {
         this.coinPayShow = true
         this.$message({
@@ -309,14 +329,14 @@ export default {
       this.$ajax.post('/api/sms/parseFile', {
         uploadFileName: this.uploadFileName,
         signature: this.value,
-        content: this.textarea2,
+        content: this.textarea2.replace(/(^\s*)|(\s*$)/g, ''),
         sendTimeType: this.radio,
         sendType: this.radio1,
         accountId: this.userInfo.userId,
         type: 1,
         totalNum: this.realNum,
         sendTime: this.value1 || '',
-        realUrl: this.textarea3
+        realUrl: this.textarea3.replace(/(^\s*)|(\s*$)/g, '')
       }).then(data => {
         console.log(data)
         if (data.data.code === '200') {
@@ -327,6 +347,7 @@ export default {
               this.$router.push({ name: 'marketEffect' })
             }
           })
+          sessionStorage.removeItem('smsContent')
         } else {
           this.$message({
             message: data.data.message,
@@ -342,6 +363,33 @@ export default {
       if (this.value === '' || this.textarea2 === '' || this.textarea3 === '') {
         this.$message({
           message: '请正确填写内容,不能为空',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.radio === '1') {
+        if (this.value1 === '') {
+          this.$message({
+            message: '请正确输入日期,不能为空',
+            type: 'warning'
+          })
+          return false
+        } else {
+          this.valueTime = Date.parse(new Date()) + 10 * 60 * 1000
+          let timeStamp = (Date.parse(new Date(this.value1)))
+          console.log(timeStamp, this.valueTime)
+          if (timeStamp < this.valueTime) {
+            this.$message({
+              message: '定时发送日期应设置为10分钟以后的日期',
+              type: 'warning'
+            })
+            return false
+          }
+        }
+      }
+      if (this.input === '') {
+        this.$message({
+          message: '请正确输入手机号,不能为空',
           type: 'warning'
         })
         return false
@@ -362,14 +410,14 @@ export default {
       }
       this.$ajax.post('/api/sms/sendOneMarket', {
         signature: this.value,
-        content: this.textarea2,
+        content: (this.textarea2).replace(/(^\s*)|(\s*$)/g, ''),
         sendType: this.radio1,
         sendTimeType: this.radio,
         sendTime: this.value1 || '',
         accountId: this.userInfo.userId,
         type: 1,
         telephone: this.input,
-        realUrl: this.textarea3
+        realUrl: (this.textarea3).replace(/(^\s*)|(\s*$)/g, '')
       }).then(data => {
         console.log(data)
         if (data.data.code === '200') {
@@ -380,6 +428,7 @@ export default {
               this.$router.push({ name: 'marketEffect' })
             }
           })
+          sessionStorage.removeItem('smsContent')
         } else {
           this.$message({
             message: data.data.message,

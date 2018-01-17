@@ -190,6 +190,8 @@ export default {
       }).then(data => {
         console.log(data)
         if (data.data.code === '200') {
+          // this.setUserInfo(data.data.data)
+          // this.setUserToken(data.headers.accesstoken)
           this.$message({
             message: '信息提交成功,请耐心等待,请重新登录',
             type: 'success',
@@ -207,6 +209,10 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
+    // ...mapActions([
+    //   'setUserInfo',
+    //   'setUserToken'
+    // ]),
     // 检测当省份发生变化出发的改变事件
     provinceChange () {
       this.itemCity = ''

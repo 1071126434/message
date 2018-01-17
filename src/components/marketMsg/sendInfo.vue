@@ -134,7 +134,8 @@ export default {
       options: [],
       value: '',
       oneSendShow: true,
-      coinPayShow: false
+      coinPayShow: false,
+      valueTime: ''
     }
   },
   created () {
@@ -288,6 +289,26 @@ export default {
         })
         return false
       }
+      if (this.radio === '1') {
+        if (this.value1 === '') {
+          this.$message({
+            message: '请正确输入日期,不能为空',
+            type: 'warning'
+          })
+          return false
+        } else {
+          this.valueTime = Date.parse(new Date()) + 10 * 60 * 1000
+          let timeStamp = (Date.parse(new Date(this.value1)))
+          console.log(timeStamp, this.valueTime)
+          if (timeStamp < this.valueTime) {
+            this.$message({
+              message: '定时发送日期应设置为10分钟以后的日期',
+              type: 'warning'
+            })
+            return false
+          }
+        }
+      }
       if (this.money < (this.normalMarketPrice * this.tiao)) {
         this.$message({
           message: '余额不足,请充值',
@@ -315,6 +336,7 @@ export default {
               this.$router.push({ name: 'market' })
             }
           })
+          sessionStorage.removeItem('smsContentNoner')
         } else {
           this.$message({
             message: data.data.message,
@@ -330,6 +352,33 @@ export default {
       if (this.value === '' || this.textarea2 === '') {
         this.$message({
           message: '请正确填写内容,不能为空',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.radio === '1') {
+        if (this.value1 === '') {
+          this.$message({
+            message: '请正确输入日期,不能为空',
+            type: 'warning'
+          })
+          return false
+        } else {
+          this.valueTime = Date.parse(new Date()) + 11 * 60 * 1000
+          let timeStamp = (Date.parse(new Date(this.value1)))
+          console.log(timeStamp, this.valueTime)
+          if (timeStamp < this.valueTime) {
+            this.$message({
+              message: '定时发送日期应设置为10分钟以后的日期',
+              type: 'warning'
+            })
+            return false
+          }
+        }
+      }
+      if (this.input === '') {
+        this.$message({
+          message: '请正确输入手机号,不能为空',
           type: 'warning'
         })
         return false
@@ -360,6 +409,7 @@ export default {
               this.$router.push({ name: 'market' })
             }
           })
+          sessionStorage.removeItem('smsContentNoner')
         } else {
           this.$message({
             message: data.data.message,

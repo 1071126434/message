@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     coinPay () {
-      window.open('/api/alipay/recharge?amount=' + this.rechargeNum + '&type=' + 1 + '&accountId=' + this.userInfo.userId + '&callBack=http://localhost:8099/home/index')
+      window.open('/api/alipay/recharge?amount=' + this.rechargeNum + '&type=' + 1 + '&accountId=' + this.userInfo.userId + '&callBack=http://10.0.0.34:8099/home/index')
     }
   }
 }

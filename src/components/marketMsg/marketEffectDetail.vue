@@ -387,7 +387,7 @@ export default {
       for (let word of data) {
         let goods = {
           sendCont: word.phoneNo || '暂无数据',
-          sendType: word.smsStatus === '0' ? '待发送' : word.smsStatus === '1' ? '已发送' : word.sendType === '2' ? '发送成功' : '发送失败',
+          sendType: word.smsStatus === '0' ? '待发送' : word.smsStatus === '1' ? '已发送' : word.smsStatus === '2' ? '发送成功' : '发送失败',
           creatTime: word.sendTime || '暂无数据',
           sendTime: word.whetherOpenUrl === '1' ? '是' : '否',
           taskState: word.openUrlTime || '暂无数据',
