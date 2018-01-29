@@ -9,15 +9,18 @@ const defaultRouter = [{
   path: '/',
   redirect: 'login'
 }]
-export default new Router({
+let router = new Router({
   routes: [...defaultRouter, ...login, ...home],
-  mode: 'history',
-  beforeEach: (to, from, next) => {
-    if (to.meta.title || to.params.message) {
-      document.title = to.meta.title || to.params.message.title
-    } else {
-      document.title = 'SD项目'
-    }
-    next()
-  }
+  mode: 'history'
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.title || to.params.message) {
+    document.title = to.meta.title || to.params.message.title
+  } else {
+    document.title = 'SD项目'
+  }
+  next()
+})
+
+export default router
